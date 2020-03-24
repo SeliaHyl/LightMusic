@@ -75,5 +75,15 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "main": ".eslintrc.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeliaHyl/LightMusic.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SeliaHyl/LightMusic/issues"
+  },
+  "homepage": "https://github.com/SeliaHyl/LightMusic#readme"
 }
