@@ -1,9 +1,10 @@
  <template>
     <div class="m-header">
+        <router-link tag="div" class="user" to="/user">
+        </router-link>
         <div class="icon"></div>
         <h1 class="text">LightMusic</h1>
-        <router-link tag="div" class="mine" to="/user">
-            <i class="icon-mine"></i>
+        <router-link tag="div" class="search" to="/search">
         </router-link>
     </div>
  </template>
@@ -32,14 +33,26 @@
             vertical-align top
             line-height 44px
             font-size $font-size-large
-        .mine
+        .user
+            position absolute
+            top 0
+            left 0
+            bg-image('user')
+            margin-top 6px
+            margin-left 5px
+            width 32px
+            height 32px
+            background-size 30px 30px
+        .search
             position absolute
             top 0
             right 0
-            .icon-mine
-                display block
-                padding 10px
-                font-size 20px
-                color $color-theme
+            bg-image('search')
+            margin-top 6px
+            margin-right 5px
+            width 32px
+            height 32px
+            background-size 30px 30px
+            
   </style>
  
