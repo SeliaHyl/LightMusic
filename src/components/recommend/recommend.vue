@@ -5,21 +5,15 @@
 				<slider class="slider-wrapper" :banners="banners"></slider>
 				<div class="recommend-list">
 					<h1 class="list-title">热门歌单推荐</h1>
-					<ul>
-						<li v-for="(item, index) in playLists" :key="index" class="item">
-							<div class="icon">
-								<img width="60" height="60" v-lazy="item.coverImgUrl" >
-							</div>
-							<div class="text">
-								<h2 class="name" v-html="item.name"></h2>
-								<p class="details">
-									<span class="total">{{item.trackCount}}</span>首
-									tags<span class="tags" v-if="item.tags.length>0" v-for="tag in item.tags">{{tag}}</span>
-									<span class="tags" v-if="item.tags.length===0">无</span>
-								</p>
-							</div>
-						</li>
-					</ul>
+					<div class="list-container">
+						<div class="list-content"
+							 v-for="(item,index) in playLists" 
+							 :key="index"
+						>
+							<img class="list-img" v-lazy="item.coverImgUrl" >
+							<p class="list-text" v-html="item.name"></p>
+						</div>
+					</div>
 				</div>
 				<div class="loading-data" v-show="!playLists.length">
 					<loading></loading>
@@ -94,34 +88,27 @@
 						margin-left 10px
 						font-size $font-size-medium
 						color $color-theme
-					.item
+					.list-container
+						width 100%
 						display flex
-						box-sizing border-box
-						align-items center
-						padding 0 20px 20px 20px
-						.icon
-							flex 0 0 60px
-							width 60px
-							padding-right 20px
-						.text
-							display flex
-							flex-direction column
-							justify-content center
-							flex 1
-							line-height 20px
-							overflow hidden
-							white-space nowrap
-							text-overflow ellipsis
-							.name
+						flex-wrap wrap
+						justify-content center
+						.list-content
+							width 30%
+							height 160px
+							margin 5px
+							.list-img
+								width 100%
+								height 110px
+								border-radius 10px
+							.list-text
 								font-size $font-size-medium
-								margin-bottom 10px
-								color $color-theme
-							.details
-								font-size $font-size-small
-								color $color-theme-l
-								.tags
-									margin-right 2px
-									margin-left 3px
+								width 100%
+								line-height 20px
+								display -webkit-box
+								-webkit-box-orient vertical
+								-webkit-line-clamp 2
+								overflow hidden
 				.loading-data
 					position absolute
 					width 100%

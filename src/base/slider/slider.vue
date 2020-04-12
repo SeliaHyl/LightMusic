@@ -61,7 +61,7 @@
 	@import "~common/stylus/variable"
 	.swiper-content
 		width 100%
-		height 180px
+		height 150px
 		.swiper-group
 			display flex
 			.swiper-item-wrapper
@@ -71,7 +71,7 @@
 					img
 						border-radius 10px
 						width 100%
-						height 180px
+						height 150px
 						overflow hidden
 			.swiper-pagination
 				bottom 2px

@@ -40,12 +40,12 @@
 				})
 				if(this.listenScroll) {
 					let me = this
-					this.scroll.on('scroll', (position) => {
-						me.$emit('scroll', position)
+					this.scroll.on('scroll', (pos) => {
+						me.$emit('scroll', pos)
 					})
 				}
 			},
-			//禁用better-scroll，DOM事件(如touchstart、touchmove、touchend)的回调函数不再响应
+			//禁用better-scroll
 			disable() {
 				this.scroll && this.scroll.disable()
 			},

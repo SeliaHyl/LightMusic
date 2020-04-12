@@ -9,7 +9,7 @@
 			<li class="list-group" v-for="group in data" ref="listGroup">
 				<h2 class="list-group-title">{{group.title}}</h2>
 				<ul>
-					<li class="list-group-item" v-for="item in group.items">
+					<li class="list-group-item" v-for="item in group.items" :key="item.id" @click="selectItem(item)">
 						<img class="head-img" v-lazy="item.imgUrl" >
 						<span class="name">{{item.name}}</span>
 					</li>
@@ -49,10 +49,8 @@
  			return {
  				scrollY: -1,
  				currentIndex: 0,
- 				//滚动是否为正数
  				positive: false,
- 				//显示处理
- 				showHot: 0
+ 				showHot: -1
  			}
  		},
 		props: {
@@ -71,11 +69,10 @@
 					return group.title.substr(0,1)
 				})
 			},
-			//吸顶处理
 			fixedTitle() {
 				if (this.showHot >= 0) {
 					this.currentIndex = 0
-					return '热门'
+					return this.data[this.currentIndex]
 				}
 				return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
 			}
@@ -97,9 +94,12 @@
 				this._scrollTo(anchorIndex)
 			},
 			scroll(pos) {
-				this.positive = pos.y > 0 ? true : false
-				this.showHot = pos.y
+				//拿到监控scroll的y值
 				this.scrollY = pos.y
+				//滚动是否为正数
+				this.positive = pos.y > 0 ? true : false
+				//显示顶部提示
+				this.showHot = pos.y
 			},
 			_scrollTo(index) {
 				if (!index && index !== 0) {
@@ -123,6 +123,9 @@
 					height += item.clientHeight
 					this.listHeight.push(height)
 				}
+			},
+			selectItem(item) {
+				this.$emit('select', item)
 			}
 		},
 		watch: {
@@ -140,9 +143,9 @@
 				}
 				//在中间部分滚动
 				for (let i = 0; i < listHeight.length - 1; i++){
-					let firstheight = listHeight[i]
-					let lastheight = listHeight[i + 1]
-					if(!lastheight || (-newY >= firstheight && -newY < lastheight)) {
+					let height1 = listHeight[i]
+					let height2 = listHeight[i + 1]
+					if(!height2 || (-newY >= height1 && -newY < height2)) {
 						this.currentIndex = i
 						return
 					}
@@ -188,7 +191,7 @@
 					font-size $font-size-medium
 		.list-fastcut
 			position absolute
-			z-index 1
+			z-index 30
 			right 0
 			top 50%
 			transform translateY(-50%)

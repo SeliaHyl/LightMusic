@@ -1,17 +1,19 @@
  <template>
     <div class="m-header">
-        <router-link tag="div" class="user" to="/user">
+        <router-link tag="div" class="search" to="/search">
+            <i class="icon-search"></i>
         </router-link>
         <div class="icon"></div>
         <h1 class="text">LightMusic</h1>
-        <router-link tag="div" class="search" to="/search">
+        <router-link tag="div" class="user" to="/user">
+            <i class="icon-mine"></i>
         </router-link>
     </div>
  </template>
   <script>
   export default {}
-  </script>
-  <style scoped lang="stylus">
+ </script>
+ <style scoped lang="stylus">
     @import "~common/stylus/variable"
     @import "~common/stylus/mixin"
     .m-header
@@ -36,23 +38,20 @@
         .user
             position absolute
             top 0
-            left 0
-            bg-image('user')
-            margin-top 6px
-            margin-left 5px
-            width 32px
-            height 32px
-            background-size 30px 30px
+            right 0
+            .icon-mine
+                display block
+                padding 12px
+                font-size 20px
+                color $color-theme
         .search
             position absolute
             top 0
-            right 0
-            bg-image('search')
-            margin-top 6px
-            margin-right 5px
-            width 32px
-            height 32px
-            background-size 30px 30px
-            
-  </style>
+            left 0
+            .icon-search
+                display block
+                padding 8px
+                font-size 28px
+                color $color-theme
+ </style>
  
