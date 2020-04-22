@@ -7,14 +7,14 @@ import 'babel-polyfill'
 import 'common/stylus/index.styl'
 import LazyLoad from 'vue-lazyload'
 import Http from 'api/http'
-//把http挂载到vue实例上
+// 把http挂载到vue实例上
 Vue.prototype.$Http = Http
 
 Vue.config.productionTip = false
 
 Vue.use(LazyLoad, {
-	loading: require('common/image/logo.png'),
-	error: require('common/image/error.png')
+  loading: require('common/image/logo.png'),
+  error: require('common/image/error.png')
 })
 
 fastclick.attach(document.body)

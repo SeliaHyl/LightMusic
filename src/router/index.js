@@ -7,7 +7,6 @@ import SingerDetail from 'components/singer-detail/singer-detail'
 import Search from 'components/search/search'
 import User from 'components/user/user'
 
-
 Vue.use(Router)
 
 export default new Router({
@@ -28,10 +27,10 @@ export default new Router({
       path: '/singer',
       component: Singer,
       children: [
-      {
-        path: ':id',
-        component: SingerDetail
-      }
+        {
+          path: ':id',
+          component: SingerDetail
+        }
       ]
     },
     {
