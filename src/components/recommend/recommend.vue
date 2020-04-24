@@ -65,70 +65,50 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
-
-.recommend {
-  position: fixed;
-  width: 100%;
-  top: 88px;
-  bottom: 0;
-
-  .recommend-wrapper {
-    height: 100%;
-    overflow: hidden;
-
-    .recommend-wrapper-content {
-      .slider-wrapper {
-        width: 96%;
-        margin: 0 auto;
-      }
-
-      .recommend-list {
-        .list-title {
-          height: 40px;
-          line-height: 40px;
-          margin-left: 10px;
-          font-size: $font-size-medium;
-          color: $color-theme;
-        }
-
-        .list-container {
-          width: 100%;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-
-          .list-content {
-            width: 110px;
-            height: 160px;
-            margin: 5px;
-
-            .list-img {
-              width: 100%;
-              height: 110px;
-              border-radius: 10px;
-            }
-
-            .list-text {
-              font-size: $font-size-medium;
-              width: 100%;
-              line-height: 20px;
-              display: -webkit-box;
-              -webkit-box-orient: vertical;
-              -webkit-line-clamp: 2;
-              overflow: hidden;
-            }
-          }
-        }
-      }
-
-      .loading-data {
-        position: absolute;
-        width: 100%;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-  }
-}
+@import '~common/stylus/variable'
+.recommend
+  position fixed
+  width 100%
+  top 88px
+  bottom 0
+  .recommend-wrapper
+    height 100%
+    overflow hidden
+    .recommend-wrapper-content
+      .slider-wrapper
+        width 96%
+        margin 0 auto
+      .recommend-list
+        .list-title
+          height 40px
+          line-height 40px
+          margin-left 10px
+          font-size $font-size-medium
+          color $color-theme
+        .list-container
+          width 100%
+          display flex
+          flex-wrap wrap
+          justify-content center
+          .list-content
+            width 110px
+            height 160px
+            margin 5px
+            .list-img
+              width 100%
+              height 110px
+              border-radius 10px
+            .list-text
+              font-size $font-size-medium
+              width 100%
+              line-height 20px
+              display -webkit-box
+              -webkit-box-orient vertical
+              -webkit-line-clamp 2
+              overflow hidden
+      .loading-data
+        position absolute
+        width 100%
+        top 50%
+        transform translateY(-50%)
 </style>

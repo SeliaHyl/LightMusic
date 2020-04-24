@@ -58,36 +58,23 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '~common/stylus/variable';
-
-.swiper-content {
-  width: 100%;
-  height: 130px;
-
-  .swiper-group {
-    display: flex;
-
-    .swiper-item-wrapper {
-      .swiper-item {
-        display: block;
-        width: 100%;
-
-        img {
-          border-radius: 10px;
-          width: 100%;
-          height: 130px;
-          overflow: hidden;
-        }
-      }
-    }
-
-    .swiper-pagination {
-      bottom: 2px;
-
-      >>>.swiper-pagination-bullet-active {
-        background: rgba(228, 220, 221, 0.8);
-      }
-    }
-  }
-}
+@import '~common/stylus/variable'
+.swiper-content
+  width 100%
+  height 130px
+  .swiper-group
+    display flex
+    .swiper-item-wrapper
+      .swiper-item
+        display block
+        width 100%
+        img
+          border-radius 10px
+          width 100%
+          height 130px
+          overflow hidden
+    .swiper-pagination
+      bottom 2px
+      >>>.swiper-pagination-bullet-active
+        background rgba(228, 220, 221, 0.8)
 </style>

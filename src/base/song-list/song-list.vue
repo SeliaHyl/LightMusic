@@ -35,45 +35,34 @@ export default {
 }
 </script>
 <style scoped lang="stylus">
-@import '~common/stylus/variable';
-@import '~common/stylus/mixin';
-
-.songs {
-  .item {
-    display: flex;
-    box-sizing: border-box;
-    padding: 3px 10px;
-    background-color: $color-background;
-
-    .rank {
-      width: 50px;
-      height: 50px;
-      line-height: 50px;
-      text-align: center;
-      color: $color-theme;
-      font-size: $font-size-medium;
-    }
-
-    .text {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      flex: 1;
-      line-height: 20px;
-      overflow: hidden;
-
-      .name {
-        no-wrap();
-        color: $color-theme;
-        font-size: $font-size-medium;
-      }
-
-      .detail {
-        no-wrap();
-        color: $color-theme-l;
-        font-size: $font-size-small-s;
-      }
-    }
-  }
-}
+@import '~common/stylus/variable'
+@import '~common/stylus/mixin'
+.songs
+  .item
+    display flex
+    box-sizing border-box
+    padding 3px 10px
+    background-color $color-background
+    .rank
+      width 50px
+      height 50px
+      line-height 50px
+      text-align center
+      color $color-theme
+      font-size $font-size-medium
+    .text
+      display flex
+      flex-direction column
+      justify-content center
+      flex 1
+      line-height 20px
+      overflow hidden
+      .name
+        no-wrap()
+        color $color-theme
+        font-size $font-size-medium
+      .detail
+        no-wrap()
+        color $color-theme-l
+        font-size $font-size-small-s
 </style>
