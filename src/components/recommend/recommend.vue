@@ -49,6 +49,7 @@ export default {
       })
       if (res.code === 200) {
         this.banners = res.banners
+        console.log(this.banners)
       }
     },
     // 获取热门歌单数据
@@ -66,6 +67,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 @import '~common/stylus/variable'
+@import '~common/stylus/mixin'
 .recommend
   position fixed
   width 100%
@@ -102,13 +104,8 @@ export default {
               font-size $font-size-medium
               width 100%
               line-height 20px
-              display -webkit-box
-              -webkit-box-orient vertical
-              -webkit-line-clamp 2
+              line-wrap()
               overflow hidden
       .loading-data
-        position absolute
-        width 100%
-        top 50%
-        transform translateY(-50%)
+        loading-data()
 </style>

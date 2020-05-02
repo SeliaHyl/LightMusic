@@ -7,8 +7,8 @@
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="play-content" ref="playBtn">
         <div class="palyer" v-show="songs.length>0">
-          <i class="icon-play"></i>
-          <span class="text">随机播放全部</span>
+          <i class="icon-play" @click="playAll"></i>
+          <span class="text">播放全部</span>
         </div>
       </div>
       <div class="filter"></div>
@@ -31,11 +31,11 @@
   </div>
 </template>
 <script>
-import SongList from "base/song-list/song-list";
-import Scroll from "base/scroll/scroll";
-import Loading from "base/loading/loading";
-import { mapActions } from "vuex";
-const HEADER_HEIGHT = 70;
+import SongList from "base/song-list/song-list"
+import Scroll from "base/scroll/scroll"
+import Loading from "base/loading/loading"
+import { mapActions } from "vuex"
+const HEADER_HEIGHT = 78
 export default {
   props: {
     bgImage: {
@@ -58,19 +58,19 @@ export default {
     };
   },
   created() {
-    this.probeType = 3;
-    this.listenScroll = true;
+    this.probeType = 3
+    this.listenScroll = true
   },
   mounted() {
-    this.bgImageHeight = this.$refs.bgImage.clientHeight;
-    this.mintranslateY = -this.bgImageHeight + HEADER_HEIGHT;
-    this.$refs.list.$el.style.top = `${this.bgImageHeight}px`;
-    let btnTop = this.bgImageHeight - 30;
-    this.$refs.playBtn.style.top = `${btnTop}px`;
+    this.bgImageHeight = this.$refs.bgImage.clientHeight
+    this.mintranslateY = -this.bgImageHeight + HEADER_HEIGHT
+    this.$refs.list.$el.style.top = `${this.bgImageHeight}px`
+    let btnTop = this.bgImageHeight - 38
+    this.$refs.playBtn.style.top = `${btnTop}px`
   },
   computed: {
     bgStyle() {
-      return `background-image:url(${this.bgImage})`;
+      return `background-image:url(${this.bgImage})`
     }
   },
   components: {
@@ -80,10 +80,10 @@ export default {
   },
   methods: {
     back() {
-      this.$router.back();
+      this.$router.back()
     },
     scroll(pos) {
-      this.scrollY = pos.y;
+      this.scrollY = pos.y
     },
     selectItem(item, index) {
       this.selectPlay({
@@ -91,25 +91,31 @@ export default {
         index
       });
     },
+    playAll() {
+      this.playAllSongs({
+        list: this.songs
+      })
+    },
     ...mapActions([
-      "selectPlay"
+      "selectPlay",
+      "playAllSongs"
     ])
   },
   watch: {
     scrollY(newY) {
       let zIndex = 0;
       if (newY <= this.mintranslateY) {
-        zIndex = 10;
-        this.$refs.bgImage.style.paddingTop = 0;
-        this.$refs.bgImage.style.height = `${HEADER_HEIGHT}px`;
+        zIndex = 10
+        this.$refs.bgImage.style.paddingTop = 0
+        this.$refs.bgImage.style.height = `${HEADER_HEIGHT}px`
       } else if (newY > this.mintranslateY && newY < 0) {
-        let paddingTop = this.bgImageHeight + newY;
-        this.$refs.bgImage.style.paddingTop = `${paddingTop}px`;
-        this.$refs.bgImage.style.height = 0;
-        let btnTop = paddingTop - 30;
-        this.$refs.playBtn.style.top = `${btnTop}px`;
+        let paddingTop = this.bgImageHeight + newY
+        this.$refs.bgImage.style.paddingTop = `${paddingTop}px`
+        this.$refs.bgImage.style.height = 0
+        let btnTop = paddingTop - 38
+        this.$refs.playBtn.style.top = `${btnTop}px`
       }
-      this.$refs.bgImage.style.zIndex = zIndex;
+      this.$refs.bgImage.style.zIndex = zIndex
     }
   }
 };
@@ -162,20 +168,20 @@ export default {
       border-top-right-radius 14px
       .palyer
         box-sizing border-box
-        width 150px
-        padding 7px 0
+        width 110px
+        padding 10px 0
         text-align center
         color $color-theme
         font-size 0
         .icon-play
           display inline-block
           vertical-align middle
-          margin-right 6px
-          font-size $font-size-medium-x
+          margin-right 8px
+          font-size $font-size-large
         .text
           display inline-block
           vertical-align middle
-          font-size $font-size-small
+          font-size $font-size-medium
     .filter
       position absolute
       top 0
@@ -196,8 +202,5 @@ export default {
     .song-lists-content
       padding 0px
     .loading-data
-      position absolute
-      width 100%
-      height 50%
-      transform translateY(-50%)
+      loading-data()
 </style>

@@ -1,11 +1,10 @@
 <template>
   <div class="songs">
     <ul>
-      <li
-        v-for="(item,index) in songs"
-        :key="item.musicId"
-        class="item"
-        @click="selectItem(item,index)"
+      <li v-for="(item,index) in songs"
+          :key="item.musicId"
+          class="item"
+          @click="selectItem(item,index)"
       >
         <p class="rank">{{index+1}}</p>
         <div class="text">

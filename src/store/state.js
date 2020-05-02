@@ -1,8 +1,4 @@
-const palyMode = {
-  sequence: 0,
-  loop: 1,
-  random: 2
-}
+import { playMode } from 'common/js/play-mode'
 
 const state = {
   singer: {},
@@ -12,9 +8,9 @@ const state = {
   // 歌曲顺序列表
   sequenceList: [],
   // 播放模式
-  mode: palyMode.sequence,
+  mode: playMode.sequence,
   // 当前播放歌曲index
-  currentIndex: -1
+  currentIndex: -1,
 }
 
 export default state

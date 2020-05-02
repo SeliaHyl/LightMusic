@@ -4,7 +4,7 @@ const mutations = {
   [types.SET_SINGER](state, singer) {
     state.singer = singer
   },
-  [types.SET_PLAYING](state, flag) {
+  [types.SET_PLAYING_STATE](state, flag) {
     state.playing = flag
   },
   [types.SET_FULLSCREEN](state, flag) {
@@ -21,7 +21,7 @@ const mutations = {
   },
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index
-  }
+  },
 }
 
 export default mutations

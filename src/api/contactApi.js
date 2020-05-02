@@ -15,10 +15,20 @@ const CONTACT_API = {
 		url: '/top/artists'
 	},
 	/*歌手的歌曲*/
-	singerDetail: {
+	SingerDetail: {
 		method: 'get',
 		url: '/artist/top/song'
-	}
+  },
+  /*音乐的url*/
+  MusicURL: {
+    method: 'get',
+    url: '/song/url'
+  },
+  /*获取歌词*/
+  MusicLyric: {
+    method: 'get',
+    url: '/lyric'
+  }
 }
 
 export default CONTACT_API

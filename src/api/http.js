@@ -10,12 +10,12 @@ let instance = axios.create({
 const Http = {} //包裹请求方法的容器
 
 for (let key in service) {
-	let api = service[key]; //method,url
+	let api = service[key]  //method,url
 	Http[key] = async function (
 		params,  //请求参数
 		config = {} //配置参数
 	) {
-		let response = {}; //请求返回值
+		let response = {} //请求返回值
 		if (api.method === 'get') {
 			config.params = params
 			try {
@@ -24,7 +24,7 @@ for (let key in service) {
 				response = err
 			}
 		}
-		return response; //返回响应值
+		return response //返回响应值
 	}
 }
 

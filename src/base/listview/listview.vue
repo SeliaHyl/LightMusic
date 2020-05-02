@@ -22,22 +22,19 @@
         </ul>
       </li>
     </ul>
-    <div class="list-fastcut"
-         @touchstart="onFastcutTouchStart"
-         @touchmove.stop.prevent="onFastcutTouchMove">
+    <div class="list-fastcut" @touchstart="onFastcutTouchStart" @touchmove.stop.prevent="onFastcutTouchMove">
       <ul>
         <li class="item"
             v-for="(item, index) in fastcutlist"
             :data-index="index"
-            :class="{'current':currentIndex===index}">{{item}}</li>
+            :class="{'current':currentIndex===index}"
+        >{{item}}</li>
       </ul>
     </div>
-    <div class="list-fixed"
-         v-show="fixedTitle">
+    <div class="list-fixed" v-show="fixedTitle">
       <h1 class="fixed-title">{{fixedTitle}}</h1>
     </div>
-    <div class="loading-data"
-         v-show="!data.length">
+    <div class="loading-data" v-show="!data.length">
       <loading></loading>
     </div>
   </scroll>
@@ -163,6 +160,7 @@ export default {
 </script>
 <style scoped lang="stylus">
 @import '~common/stylus/variable'
+@import '~common/stylus/mixin'
 .listview
   position fixed
   top 88px
@@ -197,14 +195,13 @@ export default {
   .list-fastcut
     position absolute
     z-index 30
-    right 0
+    right 6px
     top 50%
     transform translateY(-50%)
     width 20px
     text-align center
     padding 20px 0
     border-radius 10px
-    background-color $color-light-background
     .item
       padding 2px
       line-height 1
@@ -225,8 +222,5 @@ export default {
       color $color-theme
       background-color $color-background
   .loading-data
-    position absolute
-    width 100%
-    top 50%
-    transform translateY(-50%)
+    loading-data()
 </style>

@@ -1,8 +1,8 @@
  <template>
   <div class="m-header">
-    <router-link tag="div" class="search" to="/search">
+    <!-- <router-link tag="div" class="search" to="/search">
       <i class="icon-search"></i>
-    </router-link>
+    </router-link> -->
     <div class="icon"></div>
     <h1 class="text">LightMusic</h1>
     <router-link tag="div" class="user" to="/user">

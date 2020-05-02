@@ -32,7 +32,7 @@ export default {
         sliderPerView: 1, // 设置slider容器能够同时显示的slides数量
         spaceBetween: 10,
         autoplay: {
-          delay: 2000,
+          delay: 3000,
           disableOnInteraction: false // 用户操作swiper之后，是否禁止autoplay
         },
         preventClicksPropagation: true, // 拖动swiper时阻止click事件
@@ -40,7 +40,7 @@ export default {
         pagination: {
           el: '.swiper-pagination',
           type: 'bullets'
-        } // 分页器设置
+        }, // 分页器设置
       }
     }
   },
@@ -48,7 +48,7 @@ export default {
     this.reRender = false
     setTimeout(() => {
       this.reRender = true
-    }, 100)
+    }, 10);
   },
   components: {
     swiper,

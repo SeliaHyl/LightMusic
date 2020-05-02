@@ -33,29 +33,46 @@ export default {
         this.$router.push('/singer')
         return
       }
-      let res = await this.$Http.singerDetail({
+      let res = await this.$Http.SingerDetail({
         id: this.singer.id
       })
       if (res.code === 200) {
         this.songs = this._normalizeSongs(res.songs)
       }
     },
+    // 获取歌曲播放url
+    async _getMusicUrl(mid) {
+      let res = await this.$Http.MusicURL({
+        id: mid
+      })
+
+      if (res.code === 200) {
+        return Promise.resolve(res.data[0].url)
+      } else {
+        return ''
+      }
+    },
     _normalizeSongs(list) {
       let ret = []
       list.forEach(item => {
         let { name, id, al } = item
-        ret.push(
-          new songList(
-            id,
-            name,
-            al.id,
-            al.name,
-            al.picUrl,
-            this.singer.id,
-            this.singer.name,
-            this.singer.imgUrl
-          )
-        )
+        this._getMusicUrl(id).then(url => {
+          if (url !== null) {
+            ret.push(
+              new songList(
+                id,
+                name,
+                url,
+                al.id,
+                al.name,
+                al.picUrl,
+                this.singer.id,
+                this.singer.name,
+                this.singer.imgUrl
+              )
+            )
+          }
+        })
       })
       return ret
     }
