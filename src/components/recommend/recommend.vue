@@ -1,22 +1,28 @@
 <template>
-  <div class="recommend">
-    <scroll class="recommend-wrapper" :data="playLists">
+  <div class="recommend" ref="recommend">
+    <scroll class="recommend-wrapper" :data="playLists" ref="list">
       <div class="recommend-wrapper-content">
         <slider class="slider-wrapper" :banners="banners"></slider>
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <div class="list-container">
-            <div class="list-content" v-for="(item,index) in playLists" :key="index">
+            <div
+              class="list-content"
+              v-for="(item,index) in playLists"
+              :key="index"
+              @click="selectItem(item)"
+            >
               <img class="list-img" v-lazy="item.coverImgUrl" />
               <p class="list-text" v-html="item.name"></p>
             </div>
           </div>
         </div>
-        <div class="loading-data" v-show="!playLists.length">
-          <loading></loading>
-        </div>
+      </div>
+      <div class="loading-data" v-show="!playLists.length">
+        <loading></loading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 <script>
@@ -24,8 +30,11 @@ import Slider from 'base/slider/slider'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import axios from 'axios'
+import { mapMutations } from 'vuex'
+import { listMixin } from 'common/js/mixin'
+
 export default {
-  name: 'Recommend',
+  mixins: [listMixin],
   data() {
     return {
       banners: [],
@@ -49,18 +58,31 @@ export default {
       })
       if (res.code === 200) {
         this.banners = res.banners
-        console.log(this.banners)
       }
     },
     // 获取热门歌单数据
     async _getPlayList() {
       let res = await this.$Http.HotPlayList({
-        order: 'undefined',
+        order: 'hot',
         limit: 30
       })
       if (res.code === 200) {
         this.playLists = res.playlists
       }
+    },
+    selectItem(item) {
+      this.$router.push({
+        path: `/recommend/${item.id}`
+      })
+      this.setRecomlist(item)
+    },
+    ...mapMutations({
+      setRecomlist: 'SET_RECOMLIST'
+    }),
+    handleList(playList) {
+      const bottom = playList.length > 0 ? '50px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.list.refresh()
     }
   }
 }
@@ -70,15 +92,17 @@ export default {
 @import '~common/stylus/mixin'
 .recommend
   position fixed
-  width 100%
   top 88px
   bottom 0
+  left 0
+  right 0
+  width 100%
   .recommend-wrapper
     height 100%
     overflow hidden
     .recommend-wrapper-content
       .slider-wrapper
-        width 96%
+        width 94%
         margin 0 auto
       .recommend-list
         .list-title
@@ -106,6 +130,6 @@ export default {
               line-height 20px
               line-wrap()
               overflow hidden
-      .loading-data
-        loading-data()
+    .loading-data
+      loading-data()
 </style>

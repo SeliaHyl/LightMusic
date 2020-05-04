@@ -1,6 +1,6 @@
 <template>
   <div class="singer">
-    <list-view :data="singers" @select="selectSinger"></list-view>
+    <list-view :data="singers" @select="selectSinger" ref="list"></list-view>
     <router-view></router-view>
   </div>
 </template>
@@ -9,12 +9,13 @@ import axios from 'axios'
 import jsPinyin from 'js-pinyin'
 import ListView from 'base/listview/listview'
 import { mapMutations } from 'vuex'
+import { listMixin } from 'common/js/mixin'
 
 let HOT_NAME = '热门'
 let HOT_SINGER_LEN = 10
 
 export default {
-  name: 'Singer',
+  mixins: [listMixin],
   data() {
     return {
       singers: []
@@ -96,14 +97,13 @@ export default {
     },
     ...mapMutations({
       setSinger: 'SET_SINGER'
-    })
+    }),
+    handleList(playList) {
+      const bottom = playList.length > 0 ? '50px' : ''
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()
+    }
   }
 }
 </script>
-<style lang="stylus" scoped>
-.singer
-  position fixed
-  top 88px
-  bottom 0
-  width 100%
-</style>
+<style lang="stylus" scoped></style>

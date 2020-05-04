@@ -19,7 +19,7 @@ const CONTACT_API = {
 		method: 'get',
 		url: '/artist/top/song'
   },
-  /*音乐的url*/
+  /*歌曲播放url*/
   MusicURL: {
     method: 'get',
     url: '/song/url'
@@ -28,7 +28,12 @@ const CONTACT_API = {
   MusicLyric: {
     method: 'get',
     url: '/lyric'
-  }
+  },
+  /*推荐歌单详情*/
+  PlaylistDetail: {
+    method: 'get',
+    url: '/playlist/detail'
+  },
 }
 
 export default CONTACT_API

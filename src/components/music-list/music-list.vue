@@ -5,13 +5,13 @@
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class="filter"></div>
       <div class="play-content" ref="playBtn">
-        <div class="palyer" v-show="songs.length>0">
+        <div class="player" v-show="songs.length>0">
           <i class="icon-play" @click="playAll"></i>
           <span class="text">播放全部</span>
         </div>
       </div>
-      <div class="filter"></div>
     </div>
     <scroll
       class="song-lists"
@@ -35,8 +35,11 @@ import SongList from "base/song-list/song-list"
 import Scroll from "base/scroll/scroll"
 import Loading from "base/loading/loading"
 import { mapActions } from "vuex"
+import { listMixin } from 'common/js/mixin'
+
 const HEADER_HEIGHT = 78
 export default {
+  mixins: [listMixin],
   props: {
     bgImage: {
       type: String,
@@ -99,7 +102,12 @@ export default {
     ...mapActions([
       "selectPlay",
       "playAllSongs"
-    ])
+    ]),
+    handleList(playList) {
+      const bottom = playList.length > 0 ? '50px' : ''
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()
+    }
   },
   watch: {
     scrollY(newY) {
@@ -134,15 +142,15 @@ export default {
   .back
     position absolute
     top 0
-    left 6px
+    left 0
     z-index 50
     .icon-back
       display block
-      padding 9px
+      padding 10px
       font-size $font-size-large-x
       color $color-theme
   .title
-    position absolute
+    position fixed
     top 0
     left 10%
     z-index 40
@@ -150,7 +158,7 @@ export default {
     no-wrap()
     text-align center
     line-height 40px
-    font-size $font-size-large
+    font-size $font-size-medium-x
     color $color-theme
   .bg-image
     position relative
@@ -159,14 +167,21 @@ export default {
     padding-top 70%
     transform-origin top
     background-size cover
+    .filter
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
+      background rgba(7, 17, 27, 0.2)
     .play-content
       z-index 40
-      width 100%
       position absolute
+      width 100%
       background-color $color-background
-      border-top-left-radius 14px
-      border-top-right-radius 14px
-      .palyer
+      border-top-left-radius 15px
+      border-top-right-radius 15px
+      .player
         box-sizing border-box
         width 110px
         padding 10px 0
@@ -182,17 +197,6 @@ export default {
           display inline-block
           vertical-align middle
           font-size $font-size-medium
-    .filter
-      position absolute
-      top 0
-      left 0
-      width 100%
-      height 100%
-      background rgba(7, 17, 27, 0.4)
-  .bg-layer
-    position relative
-    height 100%
-    background-color $color-background
   .song-lists
     position fixed
     top 0

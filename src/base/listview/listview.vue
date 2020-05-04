@@ -128,6 +128,9 @@ export default {
     },
     selectItem (item) {
       this.$emit('select', item)
+    },
+    refresh() {
+      this.$refs.listview.refresh()
     }
   },
   watch: {
@@ -164,10 +167,10 @@ export default {
 .listview
   position fixed
   top 88px
-  left 0px
-  bottom 0px
+  left 0
+  right 0
+  bottom 0
   width 100%
-  height 100%
   overflow hidden
   background-color $color-background
   .list-group

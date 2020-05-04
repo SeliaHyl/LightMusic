@@ -2,11 +2,10 @@
   <music-list :songs="songs" :title="title" :bg-image="bgImage"></music-list>
 </template>
 <script>
-import axios from 'axios'
 import { mapGetters } from 'vuex'
-import { songDetail } from 'common/js/song'
+import axios from 'axios'
 import MusicList from 'components/music-list/music-list'
-
+import { songDetail } from 'common/js/song'
 export default {
   data() {
     return {
@@ -15,34 +14,32 @@ export default {
   },
   computed: {
     title() {
-      return this.singer.name
+      return this.recomlist.name
     },
     bgImage() {
-      return this.singer.imgUrl
+      return this.recomlist.coverImgUrl
     },
-    ...mapGetters(['singer'])
+    ...mapGetters([
+      'recomlist'
+    ])
   },
   created() {
-    this._getSingerDetail()
-  },
-  components: {
-    MusicList
+    this._getPlaylistDetail()
   },
   methods: {
-    //获取歌手详情
-    async _getSingerDetail() {
-      if (!this.singer.id) {
-        this.$router.push('/singer')
+    //获取歌单详情
+    async _getPlaylistDetail() {
+      if(!this.recomlist.id) {
+        this.$router.push('/recommend')
         return
       }
-      let res = await this.$Http.SingerDetail({
-        id: this.singer.id
+      let res = await this.$Http.PlaylistDetail({
+        id: this.recomlist.id
       })
       if (res.code === 200) {
-        this.songs = this._normalizeSongs(res.songs)
+        this.songs = this._normalizeSongs(res.playlist.tracks)
       }
     },
-    // 获取歌曲播放url
     async _getMusicUrl(mid) {
       let res = await this.$Http.MusicURL({
         id: mid
@@ -52,7 +49,7 @@ export default {
     _normalizeSongs(list) {
       let ret = []
       list.forEach(item => {
-        let { name, id, al } = item
+        let { name, id, ar, al } = item
         this._getMusicUrl(id).then(res => {
           if (res.url !== null) {
             ret.push(
@@ -63,16 +60,18 @@ export default {
                 al.id,
                 al.name,
                 al.picUrl,
-                this.singer.id,
-                this.singer.name,
-                this.singer.imgUrl
+                ar[0].id,
+                ar[0].name
               )
             )
           }
         })
       })
       return ret
-    }
+    },
+  },
+  components: {
+    MusicList
   }
 }
 </script>

@@ -4,6 +4,9 @@ const mutations = {
   [types.SET_SINGER](state, singer) {
     state.singer = singer
   },
+  [types.SET_RECOMLIST](state, recomlist) {
+    state.recomlist = recomlist
+  },
   [types.SET_PLAYING_STATE](state, flag) {
     state.playing = flag
   },

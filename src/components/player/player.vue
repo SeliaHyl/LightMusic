@@ -14,12 +14,26 @@
         </div>
       </div>
       <div class="middle">
-        <div class="middle-l">
-          <div class="cd-wrapper">
-            <div class="cd">
-              <img class="image" :src="currentSong.albumImg" />
+        <div class="cd-wrapper">
+          <div class="cd">
+            <img class="image" :src="currentSong.albumImg" />
+          </div>
+        </div>
+        <scroll class="lyric-wrapper" ref="lyricList" :data="currentLyric && currentLyric.lines">
+          <div class="lyric-list">
+            <div v-if="currentLyric">
+              <p v-show="currentLyric.lines.length>0"
+                class="text"
+                ref="lyricLine"
+                v-for="(line,index) in currentLyric.lines"
+                :key="index"
+                :class="{'current-line':index === currentLineNum}"
+              >{{line.txt}}</p>
             </div>
           </div>
+        </scroll>
+        <div v-if="currentLyric">
+          <p v-show="currentLyric.lines.length===0" class="no-lyric">暂无歌词</p>
         </div>
       </div>
       <div class="bottom">
@@ -67,7 +81,7 @@
     <audio
       ref="audio"
       :src="songUrl"
-      @canplay="ready"
+      @canplay="canplay"
       @error="error"
       @timeupdate="updateTime"
       @ended="endMusic"
@@ -75,20 +89,22 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from "vuex"
+import { mapGetters, mapMutations } from 'vuex'
 import axios from 'axios'
 import ProgressBar from 'base/progress-bar/progress-bar'
 import { playMode } from 'common/js/play-mode'
-import LyricParser from "lyric-parser"
+import LyricParser from 'lyric-parser'
+import Scroll from 'base/scroll/scroll'
 
 export default {
   data() {
     return {
-      songUrl: '',
+      songUrl: null,
       playLock: false,
       currentTime: 0,
       durationTime: 0,
-      lyric: null
+      currentLyric: null,
+      currentLineNum: 0,
     }
   },
   computed: {
@@ -123,6 +139,10 @@ export default {
       "sequenceList"
     ])
   },
+  created() {
+    this.touch = {}
+    this.touch.init = false
+  },
   methods: {
     back() {
       this.setFullScreen(false)
@@ -134,6 +154,9 @@ export default {
       this.setPlayingState(!this.playing)
       let playing = this.playing
       playing ? this.$refs.audio.play() : this.$refs.audio.pause()
+      if(this.currentLyric) {
+        this.currentLyric.togglePlay()
+      }
     },
     prevSong() {
       if (!this.playLock) {
@@ -159,7 +182,7 @@ export default {
       this.setPlayingState(true)
       this.playLock = false
     },
-    ready() {
+    canplay() {
       this.playLock = true
     },
     error() {
@@ -182,13 +205,17 @@ export default {
       if (!this.playing) {
         this.controlPlaying()
       }
+      let currentTime = this.durationTime * percent
+      if(this.currentLyric) {
+        this.currentLyric.seek(currentTime*1000)
+      }
     },
     clickChangeMode() {
       const mode = (this.mode + 1) % 3
       this.setMode(mode)
       let list = []
       if (mode === playMode.random) {
-        list = this.listRandom(this.sequenceList)
+        list = this.musicRandom(this.sequenceList)
       } else {
         list = this.sequenceList
       }
@@ -202,7 +229,7 @@ export default {
       console.log(index)
       this.setCurrentIndex(index)
     },
-    listRandom(list) {
+    musicRandom(list) {
       let copyList = list.slice()
       copyList = copyList.sort(() => {
         return Math.random() - 0.5
@@ -211,10 +238,42 @@ export default {
     },
     endMusic() {
       if (this.mode === playMode.loop) {
-        this.$refs.audio.currentTime = 0
-        this.$refs.audio.play()
+        this.musicLoop()
       } else {
         this.nextSong()
+      }
+    },
+    musicLoop() {
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
+      if(this.currentLyric) {
+        this.currentLyric.seek(0)
+      }
+    },
+    //歌词处理
+    async _getMusicLyric(mid) {
+      let res = await this.$Http.MusicLyric({
+        id: mid
+      })
+      try {
+        const lyricData = res.lrc.lyric
+        this.currentLyric = new LyricParser(lyricData, this.handleLyric)
+      } catch (error) {
+        this.currentLyric = new LyricParser('暂无歌词', this.handleLyric)
+      }
+      console.log(this.currentLyric)
+      if (this.playing) {
+        this.currentLyric.play()
+      }
+    },
+    //歌词高亮和滚动
+    handleLyric({ lineNum, txt }) {
+      this.currentLineNum = lineNum
+      if (lineNum > 4) {
+        let lineEl = this.$refs.lyricLine[lineNum - 4]
+        this.$refs.lyricList.scrollToElement(lineEl, 1000)
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
     },
     ...mapMutations({
@@ -224,39 +283,26 @@ export default {
       setMode: 'SET_MODE',
       setPlayList: 'SET_PALYLIST'
     }),
-    //歌词处理
-    async _getMusicLyric(mid) {
-      let res = await this.$Http.MusicLyric({
-        id: mid
-      })
-      try{
-        const lyricData = res.lrc.lyric
-        this.lyric = new LyricParser(lyricData)
-        console.log(this.lyric)
-      } catch(error) {
-        this.lyric = new LyricParser('暂无歌词')
-        console.log(this.lyric)
-      }
-    }
   },
   watch: {
     currentSong(newSong, oldSong) {
       if (newSong.musicId === oldSong.musicId) {
         return
       }
-
-      this.songUrl = this.currentSong.musicURL
-      console.log(this.songUrl, 'ppp')
-
-      this._getMusicLyric(this.currentSong.musicId)
+      this.songUrl = newSong.musicURL
 
       this.$nextTick(() => {
         this.$refs.audio.play()
+        this._getMusicLyric(newSong.musicId)
       })
+      if(this.currentLyric) {
+        this.currentLyric.stop()
+      }
     },
   },
   components: {
-    ProgressBar
+    ProgressBar,
+    Scroll
   }
 };
 </script>
@@ -279,8 +325,8 @@ export default {
       width 100%
       height 100%
       z-index -1
-      opacity 0.5
-      filter blur(25px)
+      opacity 0.4
+      filter blur(35px)
     .top
       position relative
       margin-top 5px
@@ -313,44 +359,59 @@ export default {
     .middle
       position fixed
       width 100%
-      bottom 170px
-      top 60px
-      white-space nowrap
-      font-size 0
-      .middle-l
-        display inline-block
-        vertical-align top
+      bottom 90px
+      top 55px
+      .cd-wrapper
         position relative
         width 100%
-        height 0
-        padding-top 80%
-        .cd-wrapper
+        height 50%
+        margin-bottom 5px
+        .cd
           position absolute
           left 10%
           top 0
           width 80%
           height 100%
-          .cd
+          box-sizing border-box
+          .image
             width 100%
             height 100%
-            box-sizing border-box
-            .image
-              position absolute
-              left 0
-              top 0
-              width 100%
-              height 100%
-              border-radius 3%
+            border-radius 3%
+      .lyric-wrapper
+        display block
+        width 100%
+        height 48%
+        overflow hidden
+        .lyric-list
+          width 80%
+          margin 0 auto
+          overflow hidden
+          text-align center
+          .text
+            line-height 28px
+            color $color-theme-l
+            font-size $font-size-medium
+            &.current-line
+              color $color-theme
+      .no-lyric
+        line-height 28px
+        position absolute
+        top 73%
+        left 50%
+        transform translateX(-50%)
+        color $color-theme-l
+        font-size $font-size-medium
     .bottom
       position absolute
-      bottom 50px
+      bottom 20px
+      left 0
       width 100%
+      box-sizing border-box
       .progress-wrapper
         display flex
         align-items center
         width 80%
         margin 0 auto
-        padding 5px 0
         .time
           color $color-theme
           font-size $font-size-small
@@ -393,9 +454,8 @@ export default {
     left 0
     bottom 0
     z-index 200
-    height 60px
+    height 50px
     background $color-background
-    border 1px solid red
     width 100%
     .icon
       flex 0 0 40px
@@ -422,11 +482,14 @@ export default {
       flex 0 0 30px
       width 30px
       padding 0 10px
-      .icon-play-mini, .icon-pause-mini, .icon-playlist
+      .icon-play-mini, .icon-pause-mini
         font-size 30px
         color $color-theme-ll
+      .icon-playlist
+        font-size 26px
+        color $color-theme-ll
       .icon-mini
-        font-size 32px
+        font-size 30px
         position absolute
         left 0
         top 0

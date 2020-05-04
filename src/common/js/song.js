@@ -1,4 +1,4 @@
-export class songList {
+export class songDetail {
   constructor(
     musicId = '', musicName = '', musicURL = '',
     albumId = '', albumName = '', albumImg = '',
@@ -13,9 +13,9 @@ export class songList {
     /*专辑id*/
     this.albumId = albumId
     /*专辑名*/
-    this.albumImg = albumImg
-    /*专辑封面*/
     this.albumName = albumName
+    /*专辑封面*/
+    this.albumImg = albumImg
     /*歌手id*/
     this.singerId = singerId
     /*歌手名*/

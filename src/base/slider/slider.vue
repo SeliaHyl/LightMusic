@@ -32,7 +32,7 @@ export default {
         sliderPerView: 1, // 设置slider容器能够同时显示的slides数量
         spaceBetween: 10,
         autoplay: {
-          delay: 3000,
+          delay: 6000,
           disableOnInteraction: false // 用户操作swiper之后，是否禁止autoplay
         },
         preventClicksPropagation: true, // 拖动swiper时阻止click事件
@@ -74,7 +74,9 @@ export default {
           height 130px
           overflow hidden
     .swiper-pagination
-      bottom 2px
+      bottom 4px
+      >>>.swiper-pagination-bullet
+        background $color-theme-ll
       >>>.swiper-pagination-bullet-active
-        background rgba(228, 220, 221, 0.8)
+        background $color-background
 </style>

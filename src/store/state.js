@@ -2,6 +2,7 @@ import { playMode } from 'common/js/play-mode'
 
 const state = {
   singer: {},
+  recomlist: {},
   playing: false,
   fullScreen: false,
   playList: [],

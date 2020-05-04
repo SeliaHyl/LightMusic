@@ -1,5 +1,7 @@
 export const singer = state => state.singer
 
+export const recomlist = state => state.recomlist
+
 export const playing = state => state.playing
 
 export const fullScreen = state => state.fullScreen
