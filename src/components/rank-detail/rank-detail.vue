@@ -2,10 +2,11 @@
   <music-list :songs="songs" :title="title" :bg-image="bgImage"></music-list>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import axios from 'axios'
 import MusicList from 'components/music-list/music-list'
+import axios from 'axios'
+import { mapGetters } from 'vuex'
 import { songDetail } from 'common/js/song'
+
 export default {
   data() {
     return {
@@ -14,31 +15,23 @@ export default {
   },
   computed: {
     title() {
-      return this.recomList.name
+      return this.topList.name
     },
     bgImage() {
-      return this.recomList.coverImgUrl
+      return this.topList.imgUrl
     },
-    ...mapGetters([
-      'recomList'
-    ])
+    ...mapGetters(['topList'])
   },
   created() {
-    this._getPlaylistDetail()
+    this.getToplistSongs()
   },
   methods: {
-    //获取歌单详情
-    async _getPlaylistDetail() {
-      if(!this.recomList.id) {
-        this.$router.push('/recommend')
+    getToplistSongs() {
+      if (!this.topList.id) {
+        this.$router.push('/rank')
         return
       }
-      let res = await this.$Http.PlaylistDetail({
-        id: this.recomList.id
-      })
-      if (res.code === 200) {
-        this.songs = this._normalizeSongs(res.playlist.tracks)
-      }
+      this.songs = this._normalizeSongs(this.topList.tracks)
     },
     async _getMusicUrl(mid) {
       let res = await this.$Http.MusicURL({
@@ -49,7 +42,7 @@ export default {
     _normalizeSongs(list) {
       let ret = []
       list.forEach(item => {
-        let { name, id, ar, al } = item
+        let { id, name, al, ar } = item
         this._getMusicUrl(id).then(res => {
           if (res.url !== null) {
             ret.push(
@@ -61,14 +54,15 @@ export default {
                 al.name,
                 al.picUrl,
                 ar[0].id,
-                ar[0].name
+                ar[0].name,
+                ''
               )
             )
           }
         })
       })
       return ret
-    },
+    }
   },
   components: {
     MusicList

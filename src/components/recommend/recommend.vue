@@ -105,12 +105,14 @@ export default {
         width 94%
         margin 0 auto
       .recommend-list
+        background-color $color-theme
         .list-title
           height 40px
           line-height 40px
-          margin-left 10px
+          padding-left 10px
           font-size $font-size-medium
           color $color-theme
+          background-color $color-background
         .list-container
           width 100%
           display flex
@@ -125,6 +127,7 @@ export default {
               height 110px
               border-radius 10px
             .list-text
+              color $color-word
               font-size $font-size-medium
               width 100%
               line-height 20px

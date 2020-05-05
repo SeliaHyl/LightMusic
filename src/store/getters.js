@@ -1,6 +1,8 @@
+import state from "./state"
+
 export const singer = state => state.singer
 
-export const recomlist = state => state.recomlist
+export const recomList = state => state.recomList
 
 export const playing = state => state.playing
 
@@ -17,3 +19,5 @@ export const currentIndex = state => state.currentIndex
 export const currentSong = (state) => {
   return state.playList[state.currentIndex] || {}
 }
+
+export const topList = state => state.topList

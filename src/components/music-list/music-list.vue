@@ -6,11 +6,11 @@
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="filter"></div>
-      <div class="play-content" ref="playBtn">
-        <div class="player" v-show="songs.length>0">
-          <i class="icon-play" @click="playAll"></i>
-          <span class="text">播放全部</span>
-        </div>
+    </div>
+    <div class="play-content" ref="playBtn">
+      <div class="player" v-show="songs.length>0">
+        <i class="icon-play" @click="playAll"></i>
+        <span class="text">播放全部</span>
       </div>
     </div>
     <scroll
@@ -38,6 +38,7 @@ import { mapActions } from "vuex"
 import { listMixin } from 'common/js/mixin'
 
 const HEADER_HEIGHT = 78
+const BUTTON_HEIGHT = 38
 export default {
   mixins: [listMixin],
   props: {
@@ -68,8 +69,7 @@ export default {
     this.bgImageHeight = this.$refs.bgImage.clientHeight
     this.mintranslateY = -this.bgImageHeight + HEADER_HEIGHT
     this.$refs.list.$el.style.top = `${this.bgImageHeight}px`
-    let btnTop = this.bgImageHeight - 38
-    this.$refs.playBtn.style.top = `${btnTop}px`
+    this.$refs.playBtn.style.top = `${this.bgImageHeight - BUTTON_HEIGHT}px`
   },
   computed: {
     bgStyle() {
@@ -112,16 +112,14 @@ export default {
   watch: {
     scrollY(newY) {
       let zIndex = 0;
-      if (newY <= this.mintranslateY) {
+      //往上滑动时newY是负值
+      if (newY < this.mintranslateY) {
         zIndex = 10
-        this.$refs.bgImage.style.paddingTop = 0
         this.$refs.bgImage.style.height = `${HEADER_HEIGHT}px`
       } else if (newY > this.mintranslateY && newY < 0) {
         let paddingTop = this.bgImageHeight + newY
-        this.$refs.bgImage.style.paddingTop = `${paddingTop}px`
-        this.$refs.bgImage.style.height = 0
-        let btnTop = paddingTop - 38
-        this.$refs.playBtn.style.top = `${btnTop}px`
+        this.$refs.bgImage.style.height = `${paddingTop}px`
+        this.$refs.playBtn.style.top = `${paddingTop - BUTTON_HEIGHT}px`
       }
       this.$refs.bgImage.style.zIndex = zIndex
     }
@@ -138,7 +136,7 @@ export default {
   left 0
   bottom 0
   right 0
-  background-color $color-background
+  background-color $color-theme
   .back
     position absolute
     top 0
@@ -163,9 +161,7 @@ export default {
   .bg-image
     position relative
     width 100%
-    height 0
-    padding-top 70%
-    transform-origin top
+    height 45%
     background-size cover
     .filter
       position absolute
@@ -174,35 +170,35 @@ export default {
       width 100%
       height 100%
       background rgba(7, 17, 27, 0.2)
-    .play-content
-      z-index 40
-      position absolute
-      width 100%
-      background-color $color-background
-      border-top-left-radius 15px
-      border-top-right-radius 15px
-      .player
-        box-sizing border-box
-        width 110px
-        padding 10px 0
-        text-align center
-        color $color-theme
-        font-size 0
-        .icon-play
-          display inline-block
-          vertical-align middle
-          margin-right 8px
-          font-size $font-size-large
-        .text
-          display inline-block
-          vertical-align middle
-          font-size $font-size-medium
+  .play-content
+    z-index 40
+    position absolute
+    width 100%
+    background-color $color-theme-ll
+    border-top-left-radius 15px
+    border-top-right-radius 15px
+    .player
+      box-sizing border-box
+      width 120px
+      padding 10px 0
+      text-align center
+      color $color-word
+      font-size 0
+      .icon-play
+        display inline-block
+        vertical-align middle
+        margin-right 8px
+        font-size $font-size-large
+      .text
+        display inline-block
+        vertical-align middle
+        font-size $font-size-medium
   .song-lists
     position fixed
     top 0
     bottom 0
     width 100%
-    background-color $color-background
+    background-color $color-theme
     .song-lists-content
       padding 0px
     .loading-data

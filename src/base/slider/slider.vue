@@ -13,6 +13,7 @@
 <script>
 import 'swiper/dist/css/swiper.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
+
 export default {
   name: 'Slider',
   props: {
@@ -56,7 +57,6 @@ export default {
   }
 }
 </script>
-
 <style scoped lang="stylus" rel="stylesheet/stylus">
 @import '~common/stylus/variable'
 .swiper-content

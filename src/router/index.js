@@ -7,7 +7,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/recommend'
+      redirect: '/rank'
     },
     {
       path: '/recommend',
@@ -21,7 +21,13 @@ export default new Router({
     },
     {
       path: '/rank',
-      component: () => import('components/rank/rank')
+      component: () => import('components/rank/rank'),
+      children: [
+        {
+          path: ':id',
+          component: () => import('components/rank-detail/rank-detail')
+        }
+      ]
     },
     {
       path: '/singer',

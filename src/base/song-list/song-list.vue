@@ -37,17 +37,18 @@ export default {
 @import '~common/stylus/variable'
 @import '~common/stylus/mixin'
 .songs
+  width 100%
+  background-color $color-theme
   .item
     display flex
     box-sizing border-box
-    padding 3px 10px
-    background-color $color-background
+    padding 3px 5px
     .rank
       width 50px
       height 50px
       line-height 50px
       text-align center
-      color $color-theme
+      color $color-word-l
       font-size $font-size-medium
     .text
       display flex
@@ -58,10 +59,10 @@ export default {
       overflow hidden
       .name
         no-wrap()
-        color $color-theme
+        color $color-word
         font-size $font-size-medium
       .detail
         no-wrap()
-        color $color-theme-l
+        color $color-word-l
         font-size $font-size-small-s
 </style>

@@ -34,6 +34,11 @@ const CONTACT_API = {
     method: 'get',
     url: '/playlist/detail'
   },
+  /*排行榜*/
+  TopList: {
+    method: 'get',
+    url: '/top/list'
+  }
 }
 
 export default CONTACT_API

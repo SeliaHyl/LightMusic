@@ -2,7 +2,8 @@ import { playMode } from 'common/js/play-mode'
 
 const state = {
   singer: {},
-  recomlist: {},
+  // 推荐歌单数据
+  recomList: {},
   playing: false,
   fullScreen: false,
   playList: [],
@@ -12,6 +13,8 @@ const state = {
   mode: playMode.sequence,
   // 当前播放歌曲index
   currentIndex: -1,
+  // 排行榜数据
+  topList: {}
 }
 
 export default state

@@ -4,8 +4,8 @@ const mutations = {
   [types.SET_SINGER](state, singer) {
     state.singer = singer
   },
-  [types.SET_RECOMLIST](state, recomlist) {
-    state.recomlist = recomlist
+  [types.SET_RECOMLIST](state, list) {
+    state.recomList = list
   },
   [types.SET_PLAYING_STATE](state, flag) {
     state.playing = flag
@@ -25,6 +25,9 @@ const mutations = {
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index
   },
+  [types.SET_TOPLIST](state, list) {
+    state.topList = list
+  }
 }
 
 export default mutations
