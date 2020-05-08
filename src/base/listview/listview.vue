@@ -22,7 +22,7 @@
         </ul>
       </li>
     </ul>
-    <div class="list-fastcut" @touchstart="onFastcutTouchStart" @touchmove.stop.prevent="onFastcutTouchMove">
+    <div class="list-fastcut" @touchstart.prevent="onFastcutTouchStart" @touchmove.prevent="onFastcutTouchMove">
       <ul>
         <li class="item"
             v-for="(item, index) in fastcutlist"
@@ -175,7 +175,7 @@ export default {
   background-color $color-background
   .list-group
     background-color $color-list-background
-    padding-bottom 30px
+    padding-bottom 20px
     .list-group-title
       height 30px
       line-height 30px
@@ -186,11 +186,13 @@ export default {
     .list-group-item
       display flex
       align-items center
-      padding 20px 0 0 30px
+      width 100%
+      box-sizing border-box
+      padding 20px 0 0 20px
       .head-img
         width 50px
         height 50px
-        border-radius 50%
+        border-radius 10px
       .name
         margin-left 20px
         color $color-word

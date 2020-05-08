@@ -14,7 +14,8 @@ const state = {
   // 当前播放歌曲index
   currentIndex: -1,
   // 排行榜数据
-  topList: {}
+  topList: {},
+  currentURL: ''
 }
 
 export default state

@@ -1,3 +1,4 @@
+/*具体接口参数配置详见：https://binaryify.github.io/NeteaseCloudMusicApi*/
 const CONTACT_API = {
 	/*轮播图*/
 	Banner: {
@@ -38,7 +39,27 @@ const CONTACT_API = {
   TopList: {
     method: 'get',
     url: '/top/list'
-  }
+  },
+  /*热门搜索*/
+  SearchHot: {
+    method: 'get',
+    url: '/search/hot/detail'
+  },
+  /*搜索歌单*/
+  SearchPlaylist: {
+    method: 'get',
+    url: '/search?type=1000'
+  },
+  /*搜索单曲*/
+  SearchSong: {
+    method: 'get',
+    url: '/search?type=1'
+  },
+  /*搜索建议*/
+  SearchSuggest: {
+    method: 'get',
+    url: '/search/suggest'
+  },
 }
 
 export default CONTACT_API

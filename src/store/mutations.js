@@ -27,6 +27,9 @@ const mutations = {
   },
   [types.SET_TOPLIST](state, list) {
     state.topList = list
+  },
+  [types.SET_CURRENT_URL](state, url) {
+    state.currentURL = url
   }
 }
 

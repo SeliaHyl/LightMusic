@@ -2,7 +2,7 @@
   <div class="recommend" ref="recommend">
     <scroll class="recommend-wrapper" :data="playLists" ref="list">
       <div class="recommend-wrapper-content">
-        <slider class="slider-wrapper" :banners="banners"></slider>
+        <slider class="slider-wrapper" :banners="banners" v-show="banners.length>0"></slider>
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <div class="list-container">
@@ -54,7 +54,7 @@ export default {
     // 获取轮播图数据
     async _getBanner() {
       let res = await this.$Http.Banner({
-        type: 2
+        type: 1
       })
       if (res.code === 200) {
         this.banners = res.banners
@@ -74,7 +74,9 @@ export default {
       this.$router.push({
         path: `/recommend/${item.id}`
       })
-      this.setRecomlist(item)
+      let {id ,name,coverImgUrl} = item
+      let recomlist = {id:id,name:name,coverImgUrl:coverImgUrl}
+      this.setRecomlist(recomlist)
     },
     ...mapMutations({
       setRecomlist: 'SET_RECOMLIST'

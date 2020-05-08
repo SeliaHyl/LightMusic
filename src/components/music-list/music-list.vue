@@ -21,9 +21,7 @@
       @scroll="scroll"
       ref="list"
     >
-      <div class="song-lists-content">
-        <song-list @select="selectItem" :songs="songs"></song-list>
-      </div>
+      <song-list @select="selectItem" :songs="songs"></song-list>
       <div class="loading-data" v-show="!songs.length">
         <loading></loading>
       </div>
@@ -34,7 +32,7 @@
 import SongList from "base/song-list/song-list"
 import Scroll from "base/scroll/scroll"
 import Loading from "base/loading/loading"
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 import { listMixin } from 'common/js/mixin'
 
 const HEADER_HEIGHT = 78
@@ -74,7 +72,7 @@ export default {
   computed: {
     bgStyle() {
       return `background-image:url(${this.bgImage})`
-    }
+    },
   },
   components: {
     SongList,
@@ -88,15 +86,33 @@ export default {
     scroll(pos) {
       this.scrollY = pos.y
     },
-    selectItem(item, index) {
+    async selectItem(item, index) {
+      let res = await this.$Http.MusicURL({
+        id: item.musicId
+      })
+      let url = ''
+      if(res.data){
+        url = res.data[0].url
+        console.log(url,'selectPlay')
+      }
       this.selectPlay({
         list: this.songs,
-        index
-      });
+        index,
+        url: url
+      })
     },
-    playAll() {
+    async playAll() {
+      let res = await this.$Http.MusicURL({
+        id: this.songs[0].musicId
+      })
+      let url = ''
+      if(res.data){
+        url = res.data[0].url
+        console.log(url,'playAll')
+      }
       this.playAllSongs({
-        list: this.songs
+        list: this.songs,
+        url: url
       })
     },
     ...mapActions([
@@ -198,9 +214,6 @@ export default {
     top 0
     bottom 0
     width 100%
-    background-color $color-theme
-    .song-lists-content
-      padding 0px
     .loading-data
       loading-data()
 </style>

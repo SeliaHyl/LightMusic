@@ -15,3 +15,5 @@ export const SET_MODE = 'SET_MODE'
 export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX'
 
 export const SET_TOPLIST = 'SET_TOPLIST'
+
+export const SET_CURRENT_URL = 'SET_CURRENT_URL'

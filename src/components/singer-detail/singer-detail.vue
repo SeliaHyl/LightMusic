@@ -25,6 +25,9 @@ export default {
   created() {
     this._getSingerDetail()
   },
+  activated() {
+    this._getSingerDetail()
+  },
   components: {
     MusicList
   },
@@ -53,23 +56,18 @@ export default {
       let ret = []
       list.forEach(item => {
         let { name, id, al } = item
-        this._getMusicUrl(id).then(res => {
-          if (res.url !== null) {
-            ret.push(
-              new songDetail(
-                id,
-                name,
-                res.url,
-                al.id,
-                al.name,
-                al.picUrl,
-                this.singer.id,
-                this.singer.name,
-                this.singer.imgUrl
-              )
-            )
-          }
-        })
+        ret.push(
+          new songDetail(
+            id,
+            name,
+            al.id,
+            al.name,
+            al.picUrl,
+            this.singer.id,
+            this.singer.name,
+            this.singer.imgUrl
+          )
+        )
       })
       return ret
     }

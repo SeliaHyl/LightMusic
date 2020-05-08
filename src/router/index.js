@@ -7,7 +7,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/rank'
+      redirect: '/recommend'
     },
     {
       path: '/recommend',

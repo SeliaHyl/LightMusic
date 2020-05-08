@@ -15,11 +15,12 @@ export default {
 }
 </script>
 <style scoped lang="stylus">
+@import '~common/stylus/variable'
 .loading
   width 100%
   text-align center
   .descript
     line-height 20px
-    color $color-theme-l
+    color $color-word-l
     font-size $font-size-small
 </style>

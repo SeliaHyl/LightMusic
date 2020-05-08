@@ -22,7 +22,8 @@
         <scroll class="lyric-wrapper" ref="lyricList" :data="currentLyric && currentLyric.lines">
           <div class="lyric-list">
             <div v-if="currentLyric">
-              <p v-show="currentLyric.lines.length>0"
+              <p
+                v-show="currentLyric.lines.length>0"
                 class="text"
                 ref="lyricLine"
                 v-for="(line,index) in currentLyric.lines"
@@ -99,7 +100,7 @@ import Scroll from 'base/scroll/scroll'
 export default {
   data() {
     return {
-      songUrl: null,
+      songUrl: '',
       playLock: false,
       currentTime: 0,
       durationTime: 0,
@@ -136,7 +137,8 @@ export default {
       "playing",
       "currentIndex",
       "mode",
-      "sequenceList"
+      "sequenceList",
+      "currentURL"
     ])
   },
   created() {
@@ -152,9 +154,7 @@ export default {
     },
     controlPlaying() {
       this.setPlayingState(!this.playing)
-      let playing = this.playing
-      playing ? this.$refs.audio.play() : this.$refs.audio.pause()
-      if(this.currentLyric) {
+      if (this.currentLyric) {
         this.currentLyric.togglePlay()
       }
     },
@@ -167,8 +167,8 @@ export default {
         index = this.playList.length - 1
       }
       this.setCurrentIndex(index)
-      this.setPlayingState(true)
-      this.playLock = false
+
+      this._getMusicUrl(this.currentSong.musicId)
     },
     nextSong() {
       if (!this.playLock) {
@@ -179,8 +179,8 @@ export default {
         index = 0
       }
       this.setCurrentIndex(index)
-      this.setPlayingState(true)
-      this.playLock = false
+
+      this._getMusicUrl(this.currentSong.musicId)
     },
     canplay() {
       this.playLock = true
@@ -206,8 +206,8 @@ export default {
         this.controlPlaying()
       }
       let currentTime = this.durationTime * percent
-      if(this.currentLyric) {
-        this.currentLyric.seek(currentTime*1000)
+      if (this.currentLyric) {
+        this.currentLyric.seek(currentTime * 1000)
       }
     },
     clickChangeMode() {
@@ -246,16 +246,31 @@ export default {
     musicLoop() {
       this.$refs.audio.currentTime = 0
       this.$refs.audio.play()
-      if(this.currentLyric) {
+      if (this.currentLyric) {
         this.currentLyric.seek(0)
+      }
+    },
+    async _getMusicUrl(mid) {
+      let res = await this.$Http.MusicURL({
+        id: mid
+      })
+      let url = ''
+      if (res.data) {
+        url = res.data[0].url
+      }
+      this.setCurrentURL(url)
+      if (!url) {
+        this.setPlayingState(false)
+      } else {
+        this.setPlayingState(true)
       }
     },
     //歌词处理
     async _getMusicLyric(mid) {
-      let res = await this.$Http.MusicLyric({
-        id: mid
-      })
       try {
+        let res = await this.$Http.MusicLyric({
+          id: mid
+        })
         const lyricData = res.lrc.lyric
         this.currentLyric = new LyricParser(lyricData, this.handleLyric)
       } catch (error) {
@@ -281,24 +296,40 @@ export default {
       setPlayingState: 'SET_PLAYING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setMode: 'SET_MODE',
-      setPlayList: 'SET_PALYLIST'
+      setPlayList: 'SET_PALYLIST',
+      setCurrentURL: 'SET_CURRENT_URL'
     }),
   },
   watch: {
+    currentURL(newVal) {
+      if (!newVal) {
+        this.songUrl = ''
+        this.$refs.audio.pause()
+        this.$refs.audio.currentTime = 0
+        this.currentLyric = new LyricParser('歌曲暂时无法播放', this.handleLyric)
+        this.setPlayingState(false)
+        return
+      }
+      this.songUrl = newVal
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+        this._getMusicLyric(this.currentSong.musicId)
+      })
+      if (this.currentLyric) {
+        this.currentLyric.stop()
+      }
+    },
     currentSong(newSong, oldSong) {
       if (newSong.musicId === oldSong.musicId) {
         return
       }
-      this.songUrl = newSong.musicURL
 
-      this.$nextTick(() => {
-        this.$refs.audio.play()
-        this._getMusicLyric(newSong.musicId)
-      })
-      if(this.currentLyric) {
-        this.currentLyric.stop()
-      }
     },
+    playing(newPlaying) {
+      this.$nextTick(() => {
+        newPlaying ? this.$refs.audio.play() : this.$refs.audio.pause()
+      })
+    }
   },
   components: {
     ProgressBar,

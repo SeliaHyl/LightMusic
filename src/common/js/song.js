@@ -1,6 +1,6 @@
 export class songDetail {
   constructor(
-    musicId = '', musicName = '', musicURL = '',
+    musicId = '', musicName = '',
     albumId = '', albumName = '', albumImg = '',
     singerId = '', singerName = '', singerImg = ''
   ) {
@@ -8,8 +8,6 @@ export class songDetail {
     this.musicId = musicId
     /*歌曲名*/
     this.musicName = musicName
-    /*歌曲播放URL*/
-    this.musicURL = musicURL
     /*专辑id*/
     this.albumId = albumId
     /*专辑名*/

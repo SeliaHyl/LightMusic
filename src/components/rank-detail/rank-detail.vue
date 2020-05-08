@@ -43,23 +43,18 @@ export default {
       let ret = []
       list.forEach(item => {
         let { id, name, al, ar } = item
-        this._getMusicUrl(id).then(res => {
-          if (res.url !== null) {
-            ret.push(
-              new songDetail(
-                id,
-                name,
-                res.url,
-                al.id,
-                al.name,
-                al.picUrl,
-                ar[0].id,
-                ar[0].name,
-                ''
-              )
-            )
-          }
-        })
+        ret.push(
+          new songDetail(
+            id,
+            name,
+            al.id,
+            al.name,
+            al.picUrl,
+            ar[0].id,
+            ar[0].name,
+            ''
+          )
+        )
       })
       return ret
     }

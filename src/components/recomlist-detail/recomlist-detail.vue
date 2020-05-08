@@ -26,10 +26,13 @@ export default {
   created() {
     this._getPlaylistDetail()
   },
+  activated() {
+    this._getPlaylistDetail()
+  },
   methods: {
     //获取歌单详情
     async _getPlaylistDetail() {
-      if(!this.recomList.id) {
+      if (!this.recomList.id) {
         this.$router.push('/recommend')
         return
       }
@@ -50,22 +53,17 @@ export default {
       let ret = []
       list.forEach(item => {
         let { name, id, ar, al } = item
-        this._getMusicUrl(id).then(res => {
-          if (res.url !== null) {
-            ret.push(
-              new songDetail(
-                id,
-                name,
-                res.url,
-                al.id,
-                al.name,
-                al.picUrl,
-                ar[0].id,
-                ar[0].name
-              )
-            )
-          }
-        })
+        ret.push(
+          new songDetail(
+            id,
+            name,
+            al.id,
+            al.name,
+            al.picUrl,
+            ar[0].id,
+            ar[0].name
+          )
+        )
       })
       return ret
     },

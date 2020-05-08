@@ -1,12 +1,12 @@
  <template>
   <div class="m-header">
-    <!-- <router-link tag="div" class="search" to="/search">
-      <i class="icon-search"></i>
-    </router-link> -->
-    <div class="icon"></div>
-    <h1 class="text">LightMusic</h1>
     <router-link tag="div" class="user" to="/user">
       <i class="icon-mine"></i>
+    </router-link>
+    <div class="icon"></div>
+    <h1 class="text">LightMusic</h1>
+    <router-link tag="div" class="search" to="/search">
+      <i class="icon-search"></i>
     </router-link>
   </div>
 </template>
@@ -38,7 +38,7 @@ export default {}
   .user
     position absolute
     top 0
-    right 0
+    left 0
     .icon-mine
       display block
       padding 12px
@@ -47,7 +47,7 @@ export default {}
   .search
     position absolute
     top 0
-    left 0
+    right 0
     .icon-search
       display block
       padding 8px
