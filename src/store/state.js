@@ -1,4 +1,5 @@
 import { playMode } from 'common/js/play-mode'
+import { loadPlay } from 'common/js/storage'
 
 const state = {
   singer: {},
@@ -15,7 +16,8 @@ const state = {
   currentIndex: -1,
   // 排行榜数据
   topList: {},
-  currentURL: ''
+  currentURL: '',
+  playHistory: loadPlay(),
 }
 
 export default state

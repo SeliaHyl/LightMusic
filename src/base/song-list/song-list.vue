@@ -11,6 +11,9 @@
           <h2 class="name">{{item.musicName}}</h2>
           <p class="detail">{{getAlbum(item)}}</p>
         </div>
+        <div class="icon" @click.stop="insertItem(item)">
+          <i class="icon-delete"></i>
+        </div>
       </li>
     </ul>
   </div>
@@ -29,6 +32,9 @@ export default {
     },
     selectItem(item, index) {
       this.$emit('select', item, index)
+    },
+    insertItem(item) {
+      this.$emit('insert', item)
     }
   }
 }
@@ -42,6 +48,7 @@ export default {
   .item
     display flex
     box-sizing border-box
+    align-items center
     padding 3px 5px
     .rank
       width 50px
@@ -65,4 +72,12 @@ export default {
         no-wrap()
         color $color-word-l
         font-size $font-size-small-s
+    .icon 
+      width 30px
+      height 30px
+      line-height 30px
+      text-align center
+      color $color-word-l
+      font-size $font-size-small
+      transform rotate(45deg)
 </style>

@@ -1,4 +1,5 @@
 import * as types from './mutation-types'
+import { savePlay, clearPlay } from 'common/js/storage'
 
 function findIndex (list, song) {
   return list.findIndex((item) => {
@@ -8,7 +9,7 @@ function findIndex (list, song) {
 
 export const selectPlay = function ({ commit }, { list, index, url}) {
   commit(types.SET_SEQUENCE_LIST, list)
-  commit(types.SET_PALYLIST, list)
+  commit(types.SET_PLAYLIST, list)
   commit(types.SET_CURRENT_INDEX, index)
   commit(types.SET_CURRENT_URL, url)
   commit(types.SET_PLAYING_STATE, true)
@@ -17,7 +18,7 @@ export const selectPlay = function ({ commit }, { list, index, url}) {
 
 export const playAllSongs = function ({ commit }, { list, url }) {
   commit(types.SET_SEQUENCE_LIST, list)
-  commit(types.SET_PALYLIST, list)
+  commit(types.SET_PLAYLIST, list)
   commit(types.SET_CURRENT_INDEX, 0)
   commit(types.SET_CURRENT_URL, url)
   commit(types.SET_PLAYING_STATE, true)
@@ -60,10 +61,76 @@ export const insertSong = function({commit, state}, { song, url }) {
   }
 
   //提交commit
-  commit(types.SET_PALYLIST, playlist)
+  commit(types.SET_PLAYLIST, playlist)
   commit(types.SET_SEQUENCE_LIST, sequencelist)
   commit(types.SET_CURRENT_INDEX, currentIndex)
   commit(types.SET_CURRENT_URL, url)
   commit(types.SET_FULLSCREEN, true)
   commit(types.SET_PLAYING_STATE, true)
+}
+
+export const deleteSong = function ( {commit, state}, song) {
+  let playlist = state.playList.slice()
+  let sequenceList = state.sequenceList.slice()
+  let currentIndex = state.currentIndex
+  let pIndex = findIndex(playlist, song)
+  playlist.splice(pIndex, 1)
+  let sIndex = findIndex(sequenceList, song)
+  sequenceList.splice(sIndex, 1)
+  if (currentIndex > pIndex || currentIndex === playlist.length) {
+    currentIndex--
+  }
+
+  commit(types.SET_PLAYLIST, playlist)
+  commit(types.SET_SEQUENCE_LIST, sequenceList)
+  commit(types.SET_CURRENT_INDEX, currentIndex)
+}
+
+export const deleteAllSongs = function( {commit} ) {
+  commit(types.SET_PLAYLIST,[])
+  commit(types.SET_SEQUENCE_LIST, [])
+  commit(types.SET_CURRENT_INDEX, -1)
+  commit(types.SET_PLAYING_STATE, false)
+}
+
+
+export const addSong = function ( {commit, state}, song) {
+  console.log(song, 'addSong')
+  let playlist = state.playList.slice()
+  let sequencelist = state.sequenceList.slice()
+  let currentIndex = state.currentIndex
+  let currentSong = playlist[currentIndex]
+  let fpIndex = findIndex(playlist, song)
+  currentIndex++
+  playlist.splice(currentIndex,0,song)
+  //当前list之前有这首歌,删除之前的
+  if (fpIndex > -1) {
+    if (currentIndex > fpIndex) {
+      playlist.splice(fpIndex, 1)
+      currentIndex--
+    } else {
+      playlist.splice(fpIndex + 1, 1)
+    }
+  }
+
+  let currentsIndex = findIndex(sequencelist, currentSong) + 1
+  let fsIndex = findIndex(sequencelist, song)
+  sequencelist.splice(currentsIndex, 0, song)
+  if (fsIndex > -1) {
+    if (currentsIndex > fsIndex) {
+      sequencelist.splice(fsIndex, 1)
+    } else {
+      sequencelist.splice(fsIndex + 1, 1)
+    }
+  }
+  commit(types.SET_PLAYLIST, playlist)
+  commit(types.SET_SEQUENCE_LIST, sequencelist)
+}
+
+export const savePlayHistory = function ({commit, state}, song) {
+  commit(types.SET_PLAY_HISTORY,savePlay(song))
+}
+
+export const clearPlayHistory = function({ commit }) {
+  commit(types.SET_PLAY_HISTORY, clearPlay())
 }

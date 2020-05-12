@@ -2,7 +2,7 @@
   <div class="player" v-show="playList.length>0">
     <div class="normal-player" v-show="fullScreen">
       <div class="background">
-        <img width="100%" height="100%" :src="currentSong.albumImg" />
+        <img width="100%" height="100%" v-lazy="currentSong.albumImg" />
       </div>
       <div class="top">
         <div class="back" @click="back">
@@ -16,7 +16,7 @@
       <div class="middle">
         <div class="cd-wrapper">
           <div class="cd">
-            <img class="image" :src="currentSong.albumImg" />
+            <img class="image" v-lazy="currentSong.albumImg" />
           </div>
         </div>
         <scroll class="lyric-wrapper" ref="lyricList" :data="currentLyric && currentLyric.lines">
@@ -34,7 +34,8 @@
           </div>
         </scroll>
         <div v-if="currentLyric">
-          <p v-show="currentLyric.lines.length===0" class="no-lyric">暂无歌词</p>
+          <p v-show="currentURL && currentLyric.lines.length===0" class="no-lyric">暂无歌词</p>
+          <p v-show="!currentURL" class="no-lyric">无播放来源,暂时无法播放</p>
         </div>
       </div>
       <div class="bottom">
@@ -58,15 +59,15 @@
           <div class="icon i-right" :class="disableClass">
             <i @click="nextSong" class="icon-next"></i>
           </div>
-          <div class="icon i-right">
-            <i class="icon-not-favorite"></i>
+          <div class="icon i-right" @click.stop="showPlaylist">
+            <i class="icon-playlist"></i>
           </div>
         </div>
       </div>
     </div>
     <div class="mini-player" @click="open" v-show="!fullScreen">
       <div class="icon">
-        <img width="40" height="40" :src="currentSong.albumImg" />
+        <img width="40" height="40" v-lazy="currentSong.albumImg" />
       </div>
       <div class="text">
         <p class="name" v-html="currentSong.musicName"></p>
@@ -75,10 +76,11 @@
       <div class="control">
         <i @click.stop="controlPlaying" :class="miniPlayIcon"></i>
       </div>
-      <div class="control">
+      <div class="control" @click.stop="showPlaylist">
         <i class="icon-playlist"></i>
       </div>
     </div>
+    <playlist ref="playlist"></playlist>
     <audio
       ref="audio"
       :src="songUrl"
@@ -90,14 +92,17 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import axios from 'axios'
 import ProgressBar from 'base/progress-bar/progress-bar'
 import { playMode } from 'common/js/play-mode'
 import LyricParser from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
+import Playlist from 'components/playlist/playlist'
+import { playerMixin } from 'common/js/mixin'
 
 export default {
+  mixins: [playerMixin],
   data() {
     return {
       songUrl: '',
@@ -118,26 +123,13 @@ export default {
     disableClass() {
       return this.playLock ? '' : 'disable'
     },
-    modeIcon() {
-      if (this.mode === playMode.sequence) {
-        return 'icon-sequence'
-      } else if (this.mode === playMode.loop) {
-        return 'icon-loop'
-      } else if (this.mode === playMode.random) {
-        return 'icon-random'
-      }
-    },
     percent() {
       return this.currentTime / this.durationTime
     },
     ...mapGetters([
       "fullScreen",
-      "playList",
-      "currentSong",
       "playing",
       "currentIndex",
-      "mode",
-      "sequenceList",
       "currentURL"
     ])
   },
@@ -153,37 +145,48 @@ export default {
       this.setFullScreen(true)
     },
     controlPlaying() {
+      if (!this.playLock) {
+        return
+      }
       this.setPlayingState(!this.playing)
       if (this.currentLyric) {
         this.currentLyric.togglePlay()
       }
+      this.playLock = true
     },
     prevSong() {
       if (!this.playLock) {
         return
       }
-      let index = this.currentIndex - 1
-      if (index === -1) {
-        index = this.playList.length - 1
+      if (this.playList.length === 1) {
+        this.musicLoop()
+      } else {
+        let index = this.currentIndex - 1
+        if (index === -1) {
+          index = this.playList.length - 1
+        }
+        this.setCurrentIndex(index)
+        this._getMusicUrl(this.currentSong.musicId)
       }
-      this.setCurrentIndex(index)
-
-      this._getMusicUrl(this.currentSong.musicId)
     },
     nextSong() {
       if (!this.playLock) {
         return
       }
-      let index = this.currentIndex + 1
-      if (index === this.playList.length) {
-        index = 0
+      if (this.playList.length === 1) {
+        this.musicLoop()
+      } else {
+        let index = this.currentIndex + 1
+        if (index === this.playList.length) {
+          index = 0
+        }
+        this.setCurrentIndex(index)
+        this._getMusicUrl(this.currentSong.musicId)
       }
-      this.setCurrentIndex(index)
-
-      this._getMusicUrl(this.currentSong.musicId)
     },
     canplay() {
       this.playLock = true
+      this.savePlayHistory(this.currentSong)
     },
     error() {
       this.playLock = true
@@ -210,32 +213,6 @@ export default {
         this.currentLyric.seek(currentTime * 1000)
       }
     },
-    clickChangeMode() {
-      const mode = (this.mode + 1) % 3
-      this.setMode(mode)
-      let list = []
-      if (mode === playMode.random) {
-        list = this.musicRandom(this.sequenceList)
-      } else {
-        list = this.sequenceList
-      }
-      this.resetCurrentIndex(list)
-      this.setPlayList(list)
-    },
-    resetCurrentIndex(list) {
-      let index = list.findIndex((item) => {
-        return item.musicId === this.currentSong.musicId
-      })
-      console.log(index)
-      this.setCurrentIndex(index)
-    },
-    musicRandom(list) {
-      let copyList = list.slice()
-      copyList = copyList.sort(() => {
-        return Math.random() - 0.5
-      })
-      return copyList
-    },
     endMusic() {
       if (this.mode === playMode.loop) {
         this.musicLoop()
@@ -251,12 +228,17 @@ export default {
       }
     },
     async _getMusicUrl(mid) {
-      let res = await this.$Http.MusicURL({
-        id: mid
-      })
       let url = ''
-      if (res.data) {
-        url = res.data[0].url
+      try {
+        let res = await this.$Http.MusicURL({
+          id: mid
+        })
+        if (res.data) {
+          url = res.data[0].url
+        }
+      } catch (error) {
+        console.log(error)
+        url = ''
       }
       this.setCurrentURL(url)
       if (!url) {
@@ -276,7 +258,6 @@ export default {
       } catch (error) {
         this.currentLyric = new LyricParser('暂无歌词', this.handleLyric)
       }
-      console.log(this.currentLyric)
       if (this.playing) {
         this.currentLyric.play()
       }
@@ -291,14 +272,17 @@ export default {
         this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
     },
+    showPlaylist() {
+      this.$refs.playlist.show()
+    },
     ...mapMutations({
       setFullScreen: 'SET_FULLSCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX',
-      setMode: 'SET_MODE',
-      setPlayList: 'SET_PALYLIST',
       setCurrentURL: 'SET_CURRENT_URL'
     }),
+    ...mapActions([
+      'savePlayHistory'
+    ])
   },
   watch: {
     currentURL(newVal) {
@@ -306,20 +290,27 @@ export default {
         this.songUrl = ''
         this.$refs.audio.pause()
         this.$refs.audio.currentTime = 0
-        this.currentLyric = new LyricParser('歌曲暂时无法播放', this.handleLyric)
         this.setPlayingState(false)
+        this.currentLyric = new LyricParser('暂时无法播放', this.handleLyric)
+        setTimeout(() => {
+          this.nextSong()
+        }, 5000)
         return
       }
       this.songUrl = newVal
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.$refs.audio.play()
         this._getMusicLyric(this.currentSong.musicId)
-      })
+      }, 500);
+      //解决歌词不断抖动
       if (this.currentLyric) {
         this.currentLyric.stop()
       }
     },
     currentSong(newSong, oldSong) {
+      if (!newSong) {
+        return
+      }
       if (newSong.musicId === oldSong.musicId) {
         return
       }
@@ -333,7 +324,8 @@ export default {
   },
   components: {
     ProgressBar,
-    Scroll
+    Scroll,
+    Playlist
   }
 };
 </script>
@@ -392,6 +384,8 @@ export default {
       width 100%
       bottom 90px
       top 55px
+      left 0
+      right 0
       .cd-wrapper
         position relative
         width 100%
@@ -409,9 +403,9 @@ export default {
             height 100%
             border-radius 3%
       .lyric-wrapper
-        display block
+        position relative
         width 100%
-        height 48%
+        max-height 48%
         overflow hidden
         .lyric-list
           width 80%
@@ -476,8 +470,6 @@ export default {
             font-size 35px
         .i-right
           text-align left
-        .icon-favorite
-          color $color-theme
   .mini-player
     display flex
     align-items center

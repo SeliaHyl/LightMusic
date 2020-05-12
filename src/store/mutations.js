@@ -13,7 +13,7 @@ const mutations = {
   [types.SET_FULLSCREEN](state, flag) {
     state.fullScreen = flag
   },
-  [types.SET_PALYLIST](state, list) {
+  [types.SET_PLAYLIST](state, list) {
     state.playList = list
   },
   [types.SET_SEQUENCE_LIST](state, list) {
@@ -30,7 +30,10 @@ const mutations = {
   },
   [types.SET_CURRENT_URL](state, url) {
     state.currentURL = url
-  }
+  },
+  [types.SET_PLAY_HISTORY](state, playhistory) {
+    state.playHistory = playhistory
+  },
 }
 
 export default mutations

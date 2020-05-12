@@ -21,7 +21,7 @@
       @scroll="scroll"
       ref="list"
     >
-      <song-list @select="selectItem" :songs="songs"></song-list>
+      <song-list @select="selectItem" :songs="songs" @insert="insertItem"></song-list>
       <div class="loading-data" v-show="!songs.length">
         <loading></loading>
       </div>
@@ -32,7 +32,7 @@
 import SongList from "base/song-list/song-list"
 import Scroll from "base/scroll/scroll"
 import Loading from "base/loading/loading"
-import { mapActions, mapGetters } from "vuex"
+import { mapActions, mapGetters, mapMutations } from "vuex"
 import { listMixin } from 'common/js/mixin'
 
 const HEADER_HEIGHT = 78
@@ -73,6 +73,9 @@ export default {
     bgStyle() {
       return `background-image:url(${this.bgImage})`
     },
+    ...mapGetters([
+      "playList"
+    ])
   },
   components: {
     SongList,
@@ -87,37 +90,65 @@ export default {
       this.scrollY = pos.y
     },
     async selectItem(item, index) {
-      let res = await this.$Http.MusicURL({
-        id: item.musicId
+      this._getMusicUrl(item.musicId).then(url => {
+        console.log(url, 'selectPlay')
+        this.selectPlay({
+          list: this.songs,
+          index,
+          url: url
+        })
       })
-      let url = ''
-      if(res.data){
-        url = res.data[0].url
-        console.log(url,'selectPlay')
-      }
-      this.selectPlay({
-        list: this.songs,
-        index,
-        url: url
+
+    },
+    playAll() {
+      this._getMusicUrl(this.songs[0].musicId).then(url => {
+        console.log(url, 'playAll')
+        this.playAllSongs({
+          list: this.songs,
+          url: url
+        })
       })
     },
-    async playAll() {
-      let res = await this.$Http.MusicURL({
-        id: this.songs[0].musicId
-      })
+    async _getMusicUrl(mid) {
       let url = ''
-      if(res.data){
-        url = res.data[0].url
-        console.log(url,'playAll')
+      try {
+        let res = await this.$Http.MusicURL({
+          id: mid
+        })
+        if (res.data) {
+          url = res.data[0].url
+        }
+      } catch (error) {
+        console.log(error)
+        url = ''
       }
-      this.playAllSongs({
-        list: this.songs,
-        url: url
-      })
+      return Promise.resolve(url)
     },
+    insertItem(item) {
+      this.addSong(item)
+      if (this.playList.length === 1) {
+        this.setCurrentIndex(0)
+        this._getMusicUrl(this.playList[0].musicId).then(url => {
+          this.setCurrentURL(url)
+          if (!url) {
+            this.setPlayingState(false)
+          } else {
+            this.setPlayingState(true)
+            this.setFullScreen(true)
+          }
+        })
+      }
+    },
+    ...mapMutations({
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setCurrentURL: 'SET_CURRENT_URL',
+      setPlayingState: 'SET_PLAYING_STATE',
+      setFullScreen: 'SET_FULLSCREEN'
+    }),
     ...mapActions([
       "selectPlay",
-      "playAllSongs"
+      "playAllSongs",
+      "addSong"
     ]),
     handleList(playList) {
       const bottom = playList.length > 0 ? '50px' : ''
