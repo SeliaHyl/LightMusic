@@ -29,6 +29,7 @@ export default {}
       color $color-text-ll
     &.router-link-active
       .tab-link
-        color $color-theme
-        border-bottom 2px solid $color-theme
+        font-weight 600
+        color $color-text
+        border-bottom 2px solid $color-text
 </style>

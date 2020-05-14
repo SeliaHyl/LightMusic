@@ -221,7 +221,7 @@ export default {
     z-index 40
     position absolute
     width 100%
-    background-color $color-theme-ll
+    background-color $color-theme
     border-top-left-radius 15px
     border-top-right-radius 15px
     .player

@@ -180,9 +180,9 @@ export default {
       height 30px
       line-height 30px
       padding-left 20px
-      font-size $font-size-small
+      font-size $font-size-medium
       color $color-theme
-      background-color $color-light-background
+      background-color $color-background-ll
     .list-group-item
       display flex
       align-items center

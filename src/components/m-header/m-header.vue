@@ -15,7 +15,6 @@ export default {}
 </script>
 <style scoped lang="stylus">
 @import '~common/stylus/variable'
-@import '~common/stylus/mixin'
 .m-header
   position relative
   height 44px
@@ -26,9 +25,9 @@ export default {}
     vertical-align top
     margin-top 7px
     width 30px
-    height 32px
+    height 30px
     margin-right 2px
-    bg-image('logo')
+    background-image url('logo.svg')
     background-size 30px 30px
   .text
     display inline-block

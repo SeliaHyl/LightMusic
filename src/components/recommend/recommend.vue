@@ -64,7 +64,7 @@ export default {
     async _getPlayList() {
       let res = await this.$Http.HotPlayList({
         order: 'hot',
-        limit: 30
+        limit: 60
       })
       if (res.code === 200) {
         this.playLists = res.playlists
@@ -115,6 +115,7 @@ export default {
           font-size $font-size-medium
           color $color-theme
           background-color $color-background
+          margin-bottom 5px
         .list-container
           width 100%
           display flex
