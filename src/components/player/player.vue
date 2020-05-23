@@ -8,16 +8,16 @@
         <div class="back" @click="back">
           <i class="icon-back"></i>
         </div>
-        <div class="top-title">
-          <p class="title" v-html="currentSong.musicName"></p>
-          <p class="subtitle" v-html="currentSong.singerName"></p>
-        </div>
       </div>
       <div class="middle">
-        <div class="cd-wrapper">
-          <div class="cd">
+        <div class="album-pic" ref="albumPic">
+          <div class="pic">
             <img class="image" v-lazy="currentSong.albumImg" />
           </div>
+        </div>
+        <div class="song-title">
+          <p class="title" v-html="currentSong.musicName"></p>
+          <p class="subtitle" v-html="currentSong.singerName"></p>
         </div>
         <scroll class="lyric-wrapper" ref="lyricList" :data="currentLyric && currentLyric.lines">
           <div class="lyric-list">
@@ -66,7 +66,7 @@
       </div>
     </div>
     <div class="mini-player" @click="open" v-show="!fullScreen">
-      <div class="icon">
+      <div class="mini-img">
         <img width="40" height="40" v-lazy="currentSong.albumImg" />
       </div>
       <div class="text">
@@ -265,8 +265,8 @@ export default {
     //歌词高亮和滚动
     handleLyric({ lineNum, txt }) {
       this.currentLineNum = lineNum
-      if (lineNum > 4) {
-        let lineEl = this.$refs.lyricLine[lineNum - 4]
+      if (lineNum > 2) {
+        let lineEl = this.$refs.lyricLine[lineNum - 2]
         this.$refs.lyricList.scrollToElement(lineEl, 1000)
       } else {
         this.$refs.lyricList.scrollTo(0, 0, 1000)
@@ -297,15 +297,15 @@ export default {
         }, 5000)
         return
       }
+      //清空歌词计时器，解决歌词不断抖动
+      if (this.currentLyric) {
+        this.currentLyric.stop()
+      }
       this.songUrl = newVal
       setTimeout(() => {
         this.$refs.audio.play()
         this._getMusicLyric(this.currentSong.musicId)
       }, 500);
-      //解决歌词不断抖动
-      if (this.currentLyric) {
-        this.currentLyric.stop()
-      }
     },
     currentSong(newSong, oldSong) {
       if (!newSong) {
@@ -314,7 +314,6 @@ export default {
       if (newSong.musicId === oldSong.musicId) {
         return
       }
-
     },
     playing(newPlaying) {
       this.$nextTick(() => {
@@ -352,7 +351,6 @@ export default {
       filter blur(35px)
     .top
       position relative
-      margin-top 5px
       .back
         position absolute
         top 0
@@ -364,11 +362,32 @@ export default {
           padding 9px
           font-size $font-size-large-x
           color $color-theme
-      .top-title
-        width 70%
+    .middle
+      position fixed
+      width 100%
+      bottom 100px
+      top 40px
+      left 0
+      right 0
+      .album-pic
+        position relative
+        width 100%
+        height 60%
+        .pic
+          margin 0 auto
+          width 84%
+          height 100%
+          box-sizing border-box
+          .image
+            width 100%
+            height 100%
+            border-radius 3%
+      .song-title
+        width 100%
         margin 0 auto
         height 40px
         text-align center
+        margin 5px 0
         .title
           line-height 25px
           color $color-text
@@ -379,33 +398,10 @@ export default {
           color $color-text-l
           no-wrap()
           font-size $font-size-small-s
-    .middle
-      position fixed
-      width 100%
-      bottom 90px
-      top 55px
-      left 0
-      right 0
-      .cd-wrapper
-        position relative
-        width 100%
-        height 50%
-        margin-bottom 5px
-        .cd
-          position absolute
-          left 10%
-          top 0
-          width 80%
-          height 100%
-          box-sizing border-box
-          .image
-            width 100%
-            height 100%
-            border-radius 3%
       .lyric-wrapper
         position relative
+        height 30%
         width 100%
-        max-height 48%
         overflow hidden
         .lyric-list
           width 80%
@@ -413,7 +409,7 @@ export default {
           overflow hidden
           text-align center
           .text
-            line-height 28px
+            line-height 27px
             color $color-theme-l
             font-size $font-size-medium
             &.current-line
@@ -421,7 +417,7 @@ export default {
       .no-lyric
         line-height 28px
         position absolute
-        top 73%
+        top 80%
         left 50%
         transform translateX(-50%)
         color $color-theme-l
@@ -437,6 +433,7 @@ export default {
         align-items center
         width 80%
         margin 0 auto
+        padding 5px 0
         .time
           color $color-theme
           font-size $font-size-small
@@ -480,7 +477,7 @@ export default {
     height 50px
     background $color-background
     width 100%
-    .icon
+    .mini-img
       flex 0 0 40px
       width 40px
       padding 0 10px 0 15px
@@ -511,9 +508,4 @@ export default {
       .icon-playlist
         font-size 26px
         color $color-theme-ll
-      .icon-mini
-        font-size 30px
-        position absolute
-        left 0
-        top 0
 </style>

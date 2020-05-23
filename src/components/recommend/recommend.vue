@@ -115,7 +115,6 @@ export default {
           font-size $font-size-medium
           color $color-theme
           background-color $color-background
-          margin-bottom 5px
         .list-container
           width 100%
           display flex
@@ -123,8 +122,7 @@ export default {
           justify-content center
           .list-content
             width 110px
-            height 160px
-            margin 5px
+            margin 10px 5px 0 5px
             .list-img
               width 100%
               height 110px

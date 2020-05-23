@@ -34,6 +34,9 @@ const mutations = {
   [types.SET_PLAY_HISTORY](state, playhistory) {
     state.playHistory = playhistory
   },
+  [types.SET_SEARCH_HISTORY](state, seahistory) {
+    state.searchHistory = seahistory
+  }
 }
 
 export default mutations

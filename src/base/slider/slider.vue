@@ -31,7 +31,7 @@ export default {
         speed: 500, // 切换速度
         loop: true, // 循环模式
         sliderPerView: 1, // 设置slider容器能够同时显示的slides数量
-        spaceBetween: 10,
+        spaceBetween: 20, //slider容器里slide之间的距离
         autoplay: {
           delay: 6000,
           disableOnInteraction: false // 用户操作swiper之后，是否禁止autoplay

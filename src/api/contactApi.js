@@ -40,6 +40,11 @@ const CONTACT_API = {
     method: 'get',
     url: '/top/list'
   },
+  /*获取全部榜单*/
+  AllTopList: {
+    method: 'get',
+    url: '/toplist/detail'
+  },
   /*热门搜索*/
   SearchHot: {
     method: 'get',

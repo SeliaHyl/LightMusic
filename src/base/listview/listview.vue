@@ -181,8 +181,8 @@ export default {
       line-height 30px
       padding-left 20px
       font-size $font-size-medium
-      color $color-theme
-      background-color $color-background-ll
+      color $color-word
+      background-color $color-light-background
     .list-group-item
       display flex
       align-items center
@@ -223,9 +223,9 @@ export default {
       height 30px
       line-height 30px
       padding-left 20px
-      font-size $font-size-small
-      color $color-theme
-      background-color $color-background
+      font-size $font-size-medium
+      color $color-word
+      background-color $color-light-background
   .loading-data
     loading-data()
 </style>

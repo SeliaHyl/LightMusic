@@ -9,7 +9,7 @@
         <i class="icon-play"></i>
         <span class="text">播放全部</span>
       </div>
-      <div class="delete-btn" @click="deleteHistory">
+      <div class="delete-btn" @click="showComfirm">
         <i class="icon-clear"></i>
       </div>
     </div>
@@ -27,6 +27,8 @@
       <div class="no-history" v-show="playHistory.length === 0">
         <p class="text">暂无播放历史！</p>
       </div>
+      <add-tip ref="addTip"></add-tip>
+      <delete-comfirm ref="comfirm" @comfirm="comfrimDelete" text="是否清空播放历史？"></delete-comfirm>
     </div>
   </div>
 </template>
@@ -34,6 +36,8 @@
 import { mapActions, mapMutations, mapGetters } from 'vuex'
 import SongList from 'base/song-list/song-list'
 import Scroll from 'base/scroll/scroll'
+import AddTip from 'base/add-tip/add-tip'
+import DeleteComfirm from 'base/delete-comfirm/delete-comfirm'
 import { listMixin } from "common/js/mixin"
 export default {
   mixins: [listMixin],
@@ -50,7 +54,9 @@ export default {
   },
   components: {
     SongList,
-    Scroll
+    Scroll,
+    AddTip,
+    DeleteComfirm
   },
   methods: {
     back() {
@@ -84,6 +90,7 @@ export default {
     },
     insertItem(item) {
       this.addSong(item)
+      this.$refs.addTip.show()
       if (this.playList.length === 1) {
         this.setCurrentIndex(0)
         this._getMusicUrl(this.playList[0].musicId).then(url => {
@@ -97,8 +104,14 @@ export default {
         })
       }
     },
-    deleteHistory() {
+    showComfirm() {
+      if (this.playHistory.length > 0) {
+        this.$refs.comfirm.show()
+      }
+    },
+    comfrimDelete() {
       this.clearPlayHistory()
+      this.$refs.comfirm.hide()
     },
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENT_INDEX',

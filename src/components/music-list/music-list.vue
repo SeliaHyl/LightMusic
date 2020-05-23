@@ -26,11 +26,13 @@
         <loading></loading>
       </div>
     </scroll>
+    <add-tip ref="addTip"></add-tip>
   </div>
 </template>
 <script>
 import SongList from "base/song-list/song-list"
 import Scroll from "base/scroll/scroll"
+import AddTip from 'base/add-tip/add-tip'
 import Loading from "base/loading/loading"
 import { mapActions, mapGetters, mapMutations } from "vuex"
 import { listMixin } from 'common/js/mixin'
@@ -80,6 +82,7 @@ export default {
   components: {
     SongList,
     Scroll,
+    AddTip,
     Loading
   },
   methods: {
@@ -126,6 +129,7 @@ export default {
     },
     insertItem(item) {
       this.addSong(item)
+      this.$refs.addTip.show()
       if (this.playList.length === 1) {
         this.setCurrentIndex(0)
         this._getMusicUrl(this.playList[0].musicId).then(url => {

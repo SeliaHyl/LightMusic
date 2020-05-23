@@ -1,5 +1,5 @@
 import { playMode } from 'common/js/play-mode'
-import { loadPlay } from 'common/js/storage'
+import { loadPlay, loadSearchKeyword } from 'common/js/storage'
 
 const state = {
   singer: {},
@@ -18,6 +18,7 @@ const state = {
   topList: {},
   currentURL: '',
   playHistory: loadPlay(),
+  searchHistory: loadSearchKeyword()
 }
 
 export default state

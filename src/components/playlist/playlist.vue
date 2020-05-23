@@ -12,7 +12,7 @@
               <i class="icon" :class="modeIcon"></i>
               <span class="text">{{modeText}}</span>
             </p>
-            <i class="icon-clear" @click.stop="deleteAll"></i>
+            <i class="icon-clear" @click.stop="showComfirm"></i>
           </div>
         </div>
         <scroll ref="listContent" class="list-content" :data="sequenceList">
@@ -25,8 +25,8 @@
               @click="selectItem(item, index)"
             >
               <i class="current" :class="getCurrentIcon(item)"></i>
-              <p class="text">
-                <span class="name">{{item.musicName}}</span>
+              <p class="text" >
+                <span class="name" :class="changeColor(item)">{{item.musicName}}</span>
                 <span class="subname">-{{item.singerName}}</span>
               </p>
               <i class="icon-delete" @click.stop="deleteOne(item)"></i>
@@ -37,6 +37,7 @@
           <span>关闭</span>
         </div>
       </div>
+      <delete-comfirm ref="comfirm" @comfirm="comfrimDeleteAll" text="是否清空当前播放列表？"></delete-comfirm>
     </div>
   </transition>
 </template>
@@ -46,6 +47,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { playMode } from 'common/js/play-mode'
 import { playerMixin } from 'common/js/mixin'
 import Scroll from 'base/scroll/scroll'
+import DeleteComfirm from 'base/delete-comfirm/delete-comfirm'
 export default {
   mixins: [playerMixin],
   data() {
@@ -81,6 +83,12 @@ export default {
     getCurrentIcon(item) {
       if (this.currentSong.musicId === item.musicId) {
         return 'icon-play'
+      }
+      return ''
+    },
+    changeColor(item) {
+      if(this.currentSong.musicId === item.musicId){
+        return 'hightlight'
       }
       return ''
     },
@@ -126,8 +134,12 @@ export default {
         this.hide()
       }
     },
-    deleteAll() {
+    showComfirm() {
+      this.$refs.comfirm.show()
+    },
+    comfrimDeleteAll() {
       this.deleteAllSongs()
+      this.$refs.comfirm.hide()
       this.hide()
     },
     scrollToCurrent(current) {
@@ -154,7 +166,8 @@ export default {
     }
   },
   components: {
-    Scroll
+    Scroll,
+    DeleteComfirm
   }
 }
 </script>
@@ -190,10 +203,10 @@ export default {
       padding 20px 30px 10px 20px
       .title
         line-height 20px
-        font-weight 600
+        font-weight 700
         font-size $font-size-medium-x
         color $color-word
-        padding-bottom 5px
+        padding-bottom 7px
         .total
           font-size $font-size-medium
           color $color-word-ll
@@ -234,6 +247,8 @@ export default {
           .name
             font-size $font-size-medium
             color $color-word
+            &.hightlight
+              color $color-background
           .subname
             font-size $font-size-small
             color $color-word-l
@@ -242,7 +257,7 @@ export default {
           color $color-word-l
     .list-close
       text-align center
-      line-height 40px
+      line-height 50px
       background $color-background
       font-size $font-size-medium
       color $color-theme

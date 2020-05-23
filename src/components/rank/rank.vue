@@ -32,8 +32,7 @@ export default {
   mixins: [listMixin],
   data() {
     return {
-      topList: [],
-      recomList: []
+      topList: []
     }
   },
   created() {
@@ -41,7 +40,7 @@ export default {
   },
   methods: {
     getTopListData() {
-      let arr = [0, 1, 2, 3, 23, 28, 31, 24, 26, 10]
+      let arr = [0, 1, 2, 3, 4, 23, 28, 31]
       arr.forEach((idx) => {
         this._getTopList(idx).then(playlist => {
           let { id, name, coverImgUrl, tracks } = playlist

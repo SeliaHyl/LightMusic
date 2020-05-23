@@ -10,38 +10,56 @@
           <i class="icon-dismiss" v-show="keyWords" @click="clear"></i>
         </div>
       </div>
-      <scroll class="hot-search" :data="hotSearchs" ref="list" v-show="!isShow">
-        <div v-show="hotSearchs">
-          <p class="notice">热搜榜</p>
-          <ul>
-            <li
-              class="item"
-              v-for="(item,index) in hotSearchs"
-              :key="index"
-              @click="selectItem(item)"
-            >
-              <p class="rank" :class="{'high-light': index < 3}">{{index+1}}</p>
-              <div class="text">
-                <p class="word" :class="{'high-light': index < 3}">{{item.searchWord}}</p>
-                <p class="content">{{item.content}}</p>
-              </div>
-              <p class="score">{{item.score}}</p>
-            </li>
-          </ul>
-          <div class="loading-data" v-show="!hotSearchs.length">
-            <loading></loading>
+      <scroll class="search-content" :data="searchData" ref="searchList" v-show="!isShow">
+        <div>
+          <div class="history" v-show="searchHistory.length>0">
+            <div class="title">
+              <span class="text">最近搜索</span>
+              <span class="clear" @click="showComfirm">清空</span>
+            </div>
+            <div class="keywords">
+              <p
+                class="word"
+                @click="selectItem(item)"
+                v-for="(item,index) in searchHistory"
+                :key="index"
+              >{{item}}</p>
+            </div>
+          </div>
+          <div v-show="hotSearchs" class="hot-search">
+            <p class="title">热搜榜</p>
+            <ul>
+              <li
+                class="item"
+                v-for="(item,index) in hotSearchs"
+                :key="index"
+                @click="selectItem(item)"
+              >
+                <p class="rank" :class="{'high-light': index < 3}">{{index+1}}</p>
+                <div class="text">
+                  <p class="word" :class="{'high-light': index < 3}">{{item.searchWord}}</p>
+                  <p class="content">{{item.content}}</p>
+                </div>
+                <p class="score">{{item.score}}</p>
+              </li>
+            </ul>
+            <div class="loading-data" v-show="!hotSearchs.length">
+              <loading></loading>
+            </div>
           </div>
         </div>
       </scroll>
+      <delete-comfirm ref="comfirm" @comfirm="comfrimDelete" text="是否清空搜索历史？"></delete-comfirm>
       <search-suggest v-show="isShow" :singers="singers" :playlists="playlists" :songs="songs"></search-suggest>
     </div>
   </transition>
 </template>
 <script>
 import Scroll from 'base/scroll/scroll'
+import DeleteComfirm from 'base/delete-comfirm/delete-comfirm'
 import Loading from 'base/loading/loading'
 import SearchSuggest from 'components/search-suggest/search-suggest'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { songDetail } from 'common/js/song'
 import { listMixin } from 'common/js/mixin'
 export default {
@@ -57,6 +75,12 @@ export default {
       isShow: false
     }
   },
+  computed: {
+    searchData() {
+      return this.hotSearchs.concat(this.searchHistory)
+    },
+    ...mapGetters(['searchHistory'])
+  },
   created() {
     this._gethotSearchs()
     this.$watch('keyWords', this.debounce((newVal) => {
@@ -66,10 +90,12 @@ export default {
         this.playlists = []
         this.songs = []
         this._getSearchResult(newVal)
+        this.saveSearchHistory(newVal)
       } else {
         this.isShow = false
+        this.$refs.searchList.refresh()
       }
-    }, 500)
+    }, 200)
     )
   },
   methods: {
@@ -130,7 +156,11 @@ export default {
       return Promise.resolve(res.data[0])
     },
     selectItem(item) {
-      this.keyWords = item.searchWord
+      if (item.searchWord) {
+        this.keyWords = item.searchWord
+      } else {
+        this.keyWords = item
+      }
     },
     //input节流函数
     debounce(func, delay) {
@@ -144,14 +174,26 @@ export default {
         }, delay)
       }
     },
+    showComfirm() {
+      this.$refs.comfirm.show()
+    },
+    comfrimDelete() {
+      this.clearSearchHistory()
+      this.$refs.comfirm.hide()
+    },
+    ...mapActions([
+      'saveSearchHistory',
+      'clearSearchHistory'
+    ]),
     handleList(playList) {
       const bottom = playList.length > 0 ? '50px' : ''
-      this.$refs.list.$el.style.bottom = bottom
-      this.$refs.list.refresh()
+      this.$refs.searchList.$el.style.bottom = bottom
+      this.$refs.searchList.refresh()
     }
   },
   components: {
     Scroll,
+    DeleteComfirm,
     SearchSuggest,
     Loading
   },
@@ -214,57 +256,88 @@ export default {
         display block
         font-size $font-size-large
         color $color-text-l
-  .hot-search
+  .search-content
     position fixed
     top 50px
     bottom 0
     width 100%
     overflow hidden
-    .notice
-      line-height 20px
-      color $color-word-l
-      font-size $font-size-small
-      padding 15px 0 0 20px
-    .item
-      display flex
-      box-sizing border-box
-      align-items center
-      padding 5px 10px
-      .rank
-        width 45px
-        height 45px
-        line-height 45px
-        text-align center
-        color $color-word-l
-        font-size $font-size-medium
-        flex 0 0 45px
-        &.high-light
-          color red
-      .text
+    .history
+      width 100%
+      .title
+        padding-top 10px
+        height 20px
         display flex
-        flex-direction column
-        justify-content center
-        flex 1
+        justify-content space-between
         line-height 20px
-        overflow hidden
+        .text
+          font-size $font-size-small
+          color $color-word-l
+          padding 0 10px
+        .clear
+          font-size $font-size-small
+          color red
+          padding 0 10px
+      .keywords
+        display flex
+        flex-wrap wrap
+        justify-content left
         .word
-          no-wrap()
-          color $color-word
+          margin 5px
+          padding 5px 10px
+          border-radius 10px
+          font-size $font-size-small
+          color $color-word-l
+          background-color $color-light-background
+          &:hover
+            background-color $color-word
+    .hot-search
+      width 100%
+      .title
+        line-height 20px
+        color $color-word-l
+        font-size $font-size-small
+        padding 15px 0 0 10px
+      .item
+        display flex
+        box-sizing border-box
+        align-items center
+        padding 5px 10px
+        .rank
+          width 45px
+          height 45px
+          line-height 45px
+          text-align center
+          color $color-word-l
           font-size $font-size-medium
-          padding-bottom 2px
+          flex 0 0 45px
           &.high-light
-            font-weight 600
-        .content
+            color red
+        .text
+          display flex
+          flex-direction column
+          justify-content center
+          flex 1
+          line-height 20px
+          overflow hidden
+          .word
+            no-wrap()
+            color $color-word
+            font-size $font-size-medium
+            padding-bottom 2px
+            &.high-light
+              font-weight 600
+          .content
+            no-wrap()
+            color $color-word-l
+            font-size $font-size-small-s
+        .score
+          line-height 30px
+          text-align center
           no-wrap()
           color $color-word-l
           font-size $font-size-small-s
-      .score
-        line-height 30px
-        text-align center
-        no-wrap()
-        color $color-word-l
-        font-size $font-size-small-s
-        flex 0 0 70px
-    .loading-data
-      loading-data()
+          flex 0 0 70px
+      .loading-data
+        loading-data()
 </style>
