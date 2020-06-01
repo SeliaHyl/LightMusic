@@ -51,6 +51,12 @@
       </scroll>
       <delete-comfirm ref="comfirm" @comfirm="comfrimDelete" text="是否清空搜索历史？"></delete-comfirm>
       <search-suggest v-show="isShow" :singers="singers" :playlists="playlists" :songs="songs"></search-suggest>
+      <div class="loading-playlist" v-show="keyWords&&!songs.length">
+        <div class="loading">
+          <img src="../../base/loading/loading.gif" height="25" width="25" />
+          <p class="title">加载中</p>
+        </div>
+      </div>
     </div>
   </transition>
 </template>
@@ -340,4 +346,20 @@ export default {
           flex 0 0 70px
       .loading-data
         loading-data()
+  .loading-playlist
+    position fixed
+    top 50px
+    bottom 0
+    width 100%
+    background-color $color-theme
+    .loading
+      position absolute
+      top 50%
+      left 50%
+      transform translate3d(-50%, -50%, 0)
+      text-align center
+      .title
+        line-height 20px
+        color $color-word-l
+        font-size $font-size-small
 </style>

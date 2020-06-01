@@ -255,6 +255,7 @@ export default {
         })
         const lyricData = res.lrc.lyric
         this.currentLyric = new LyricParser(lyricData, this.handleLyric)
+        console.log(this.currentLyric)
       } catch (error) {
         this.currentLyric = new LyricParser('暂无歌词', this.handleLyric)
       }
@@ -263,11 +264,12 @@ export default {
       }
     },
     //歌词高亮和滚动
-    handleLyric({ lineNum, txt }) {
+    handleLyric({ lineNum }) {
       this.currentLineNum = lineNum
       if (lineNum > 2) {
         let lineEl = this.$refs.lyricLine[lineNum - 2]
-        this.$refs.lyricList.scrollToElement(lineEl, 1000)
+
+        this.$refs.lyricList.scrollToElement(lineEl, 100)
       } else {
         this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
@@ -300,6 +302,8 @@ export default {
       //清空歌词计时器，解决歌词不断抖动
       if (this.currentLyric) {
         this.currentLyric.stop()
+        this.currentTime = 0
+        this.currentLineNum = 0
       }
       this.songUrl = newVal
       setTimeout(() => {

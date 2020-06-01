@@ -21,7 +21,7 @@
         v-show="playHistory.length > 0"
       >
         <div class="list-inner">
-          <song-list :songs="playHistory" @insert="insertItem"></song-list>
+          <song-list :songs="playHistory" @insert="insertItem" @select="selectItem"></song-list>
         </div>
       </scroll>
       <div class="no-history" v-show="playHistory.length === 0">
@@ -104,6 +104,16 @@ export default {
         })
       }
     },
+    async selectItem(item, index) {
+      this._getMusicUrl(item.musicId).then(url => {
+        console.log(url, 'selectPlay')
+        this.selectPlay({
+          list: this.playHistory,
+          index,
+          url: url
+        })
+      })
+    },
     showComfirm() {
       if (this.playHistory.length > 0) {
         this.$refs.comfirm.show()
@@ -127,7 +137,8 @@ export default {
     ...mapActions([
       'playAllSongs',
       'addSong',
-      'clearPlayHistory'
+      'clearPlayHistory',
+      'selectPlay'
     ])
   }
 }

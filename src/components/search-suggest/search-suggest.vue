@@ -50,7 +50,6 @@ export default {
     selectSinger(item) {
       let { id, name, img1v1Url } = item
       let singer = { id: id, name: name, imgUrl: img1v1Url }
-      console.log(singer)
       this.setSinger(singer)
       this.$router.push({
         path: `/singer/${singer.id}`

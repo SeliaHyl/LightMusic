@@ -241,7 +241,6 @@ export default {
         margin-right 8px
         font-size $font-size-large
       .text
-        display inline-block
         vertical-align middle
         font-size $font-size-medium
   .song-lists

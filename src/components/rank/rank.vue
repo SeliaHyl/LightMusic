@@ -14,7 +14,7 @@
           </div>
         </div>
       </div>
-      <div class="loading-data" v-show="!topList.length">
+      <div class="loading-data" v-show="topList.length<8">
         <loading></loading>
       </div>
     </scroll>
